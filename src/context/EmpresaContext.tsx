@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 interface Empresa {
   id: string;
   nome: string;
-  dominio: string;
+  dominio: string; // O campo chave para a busca automática
   pagamento_ok: boolean;
   situacao: string;
 }
@@ -38,56 +38,37 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    let tentativas = 0;
+    // MODIFICADO: A lógica de fallback não é mais necessária com a busca automática
+    const config = (window as any).WebChatTupitecConfig;
+    const dominio = config?.dominio && config.dominio.trim();
 
-    const verificarConfig = () => {
-      const config = (window as any).WebChatTupitecConfig;
-      // Garante que um ID vazio (empresaId: '') seja tratado como não encontrado
-      const empresaId = config?.empresaId && config.empresaId.trim();
-
-      if (empresaId) {
-        console.log('🔍 Buscando dados para empresa ID:', empresaId);
-        carregarDados(empresaId);
-        return true;
-      }
-
-      tentativas++;
-      if (tentativas > 20) {
-        // --- ATUALIZAÇÃO INICIA AQUI ---
-        // Se o ID não for encontrado, usa o ID padrão '21' para teste.
-        console.warn('⚠️ ID da empresa não encontrado. Usando ID padrão para teste: 21');
-        carregarDados('21');
-        return true; // Para o intervalo
-        // --- ATUALIZAÇÃO TERMINA AQUI ---
-      }
-
-      return false;
-    };
-
-    const intervalo = setInterval(() => {
-      const pronto = verificarConfig();
-      if (pronto) clearInterval(intervalo);
-    }, 250); // Verifica a cada 250ms, por até 5s
-
-    return () => clearInterval(intervalo);
+    if (dominio) {
+      console.log('🔍 Buscando dados para o domínio:', dominio);
+      carregarDados(dominio);
+    } else {
+      console.error('❌ Domínio não encontrado em window.WebChatTupitecConfig');
+      setCarregando(false);
+    }
   }, []);
 
-  const carregarDados = async (empresaId: string) => {
+  // MODIFICADO: A função agora aceita 'dominio' em vez de 'empresaId'
+  const carregarDados = async (dominio: string) => {
     try {
+      // MODIFICADO: Busca na tabela 'empresas' usando a coluna 'dominio'
       const { data: empresas, error: erroEmpresa } = await supabase
         .from('empresas')
         .select('*')
-        .eq('id', empresaId)
+        .eq('dominio', dominio) // A busca agora é pelo domínio
         .limit(1);
 
       if (erroEmpresa) {
-        console.error('❌ Erro ao buscar empresa:', erroEmpresa);
+        console.error('❌ Erro ao buscar empresa pelo domínio:', erroEmpresa);
         setCarregando(false);
         return;
       }
 
       if (!empresas || empresas.length === 0) {
-        console.warn('⚠️ Nenhuma empresa encontrada com ID:', empresaId);
+        console.warn('⚠️ Nenhuma empresa encontrada com o domínio:', dominio);
         setCarregando(false);
         return;
       }
@@ -95,11 +76,14 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
       const empresaData = empresas[0];
       setEmpresa(empresaData);
       console.log('✅ Empresa encontrada:', empresaData);
+      
+      // IMPORTANTE: Agora pegamos o ID da empresa encontrada para as próximas buscas
+      const empresaId = empresaData.id;
 
       const { data: info, error: erroInfo } = await supabase
         .from('informacoes_empresa')
         .select('*')
-        .eq('empresa_id', empresaId);
+        .eq('empresa_id', empresaId); // Continua usando o ID aqui
 
       if (erroInfo) {
         console.warn('⚠️ Erro ao buscar informações da empresa:', erroInfo);
@@ -115,7 +99,7 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
       const { data: atendentes, error: erroAtendentes } = await supabase
         .from('atendentes')
         .select('*')
-        .eq('empresa_id', empresaId);
+        .eq('empresa_id', empresaId); // Continua usando o ID aqui
 
       if (erroAtendentes) {
         console.warn('⚠️ Erro ao buscar atendentes:', erroAtendentes);
