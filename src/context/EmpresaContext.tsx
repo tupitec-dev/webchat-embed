@@ -44,7 +44,8 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
 
 
     if (!empresaId) {
-      console.error('❌ Atributo data-empresa-id não encontrado no <script>.');
+      console.error('❌ Atributo data-empresa não encontrado no <script>.');
+
       setCarregando(false);
       return;
     }
