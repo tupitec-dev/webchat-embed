@@ -38,11 +38,18 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    const currentScript = document.currentScript as HTMLScriptElement | null;
-    const dominio = currentScript?.getAttribute('data-dominio') || window.location.hostname;
+    let dominio = '';
+
+    try {
+      dominio = window.parent.location.hostname;
+      console.log('🌐 Dominio capturado via parent:', dominio);
+    } catch (e) {
+      dominio = window.location.hostname;
+      console.warn('⚠️ Fallback para self hostname:', dominio);
+    }
 
     if (!dominio) {
-      console.error('❌ Domínio não encontrado no script embed.');
+      console.error('❌ Domínio não identificado.');
       setCarregando(false);
       return;
     }
@@ -51,7 +58,6 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
 
     (async () => {
       try {
-        // 1. Buscar empresa pelo domínio
         const { data: empresas, error: erroEmpresa } = await supabase
           .from('empresas')
           .select('*')
@@ -74,7 +80,6 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
         setEmpresa(empresaData);
         console.log('✅ Empresa encontrada:', empresaData);
 
-        // 2. Buscar informações adicionais
         const { data: info, error: erroInfo } = await supabase
           .from('informacoes_empresa')
           .select('*')
@@ -91,7 +96,6 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
         setInformacoes(infoMap);
         console.log('ℹ️ Informações adicionais:', infoMap);
 
-        // 3. Buscar atendentes
         const { data: atendentes, error: erroAtendentes } = await supabase
           .from('atendentes')
           .select('*')
