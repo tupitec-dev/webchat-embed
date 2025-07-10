@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 interface Empresa {
   id: string;
   nome: string;
-  dominio: string; // O campo chave para a busca automática
+  dominio: string;
   pagamento_ok: boolean;
   situacao: string;
 }
@@ -38,27 +38,28 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    // MODIFICADO: A lógica de fallback não é mais necessária com a busca automática
-    const config = (window as any).WebChatTupitecConfig;
-    const dominio = config?.dominio && config.dominio.trim();
+    // VERSÃO FINAL: Procura pela tag de script que o PHP criou usando o ID que definimos.
+    const scriptTag = document.getElementById('tupitec-chat-script');
+    
+    // Lê o domínio diretamente do atributo 'data-dominio' do script.
+    const dominio = scriptTag?.getAttribute('data-dominio');
 
     if (dominio) {
-      console.log('🔍 Buscando dados para o domínio:', dominio);
-      carregarDados(dominio);
+        console.log('✅ Domínio encontrado via data-attribute:', dominio);
+        carregarDados(dominio);
     } else {
-      console.error('❌ Domínio não encontrado em window.WebChatTupitecConfig');
-      setCarregando(false);
+        // Este erro agora nos diz se a tag principal do script não foi encontrada.
+        console.error('❌ Não foi possível encontrar a tag do script do chat (#tupitec-chat-script) ou o atributo data-dominio.');
+        setCarregando(false);
     }
-  }, []);
+  }, []); // Roda apenas uma vez, quando o chat é montado.
 
-  // MODIFICADO: A função agora aceita 'dominio' em vez de 'empresaId'
   const carregarDados = async (dominio: string) => {
     try {
-      // MODIFICADO: Busca na tabela 'empresas' usando a coluna 'dominio'
       const { data: empresas, error: erroEmpresa } = await supabase
         .from('empresas')
         .select('*')
-        .eq('dominio', dominio) // A busca agora é pelo domínio
+        .eq('dominio', dominio)
         .limit(1);
 
       if (erroEmpresa) {
@@ -77,43 +78,34 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
       setEmpresa(empresaData);
       console.log('✅ Empresa encontrada:', empresaData);
       
-      // IMPORTANTE: Agora pegamos o ID da empresa encontrada para as próximas buscas
       const empresaId = empresaData.id;
 
       const { data: info, error: erroInfo } = await supabase
         .from('informacoes_empresa')
         .select('*')
-        .eq('empresa_id', empresaId); // Continua usando o ID aqui
+        .eq('empresa_id', empresaId);
 
       if (erroInfo) {
         console.warn('⚠️ Erro ao buscar informações da empresa:', erroInfo);
       }
 
       const infoMap: Record<string, string> = {};
-      info?.forEach((item) => {
-        infoMap[item.chave] = item.valor;
-      });
+      info?.forEach((item) => { infoMap[item.chave] = item.valor; });
       setInformacoes(infoMap);
-      console.log('ℹ️ Informações adicionais:', infoMap);
 
-      const { data: atendentes, error: erroAtendentes } = await supabase
+      const { data: atendentes } = await supabase
         .from('atendentes')
         .select('*')
-        .eq('empresa_id', empresaId); // Continua usando o ID aqui
-
-      if (erroAtendentes) {
-        console.warn('⚠️ Erro ao buscar atendentes:', erroAtendentes);
-      }
+        .eq('empresa_id', empresaId);
 
       if (atendentes && atendentes.length > 0) {
         const aleatorio = atendentes[Math.floor(Math.random() * atendentes.length)];
         setAtendente(aleatorio);
-        console.log('🙋‍♀️ Atendente selecionado:', aleatorio);
       }
 
       setCarregando(false);
     } catch (erro) {
-      console.error('❌ Erro inesperado ao carregar dados da empresa:', erro);
+      console.error('❌ Erro inesperado ao carregar dados:', erro);
       setCarregando(false);
     }
   };
