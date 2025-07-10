@@ -38,14 +38,12 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    // 🔍 Pega o ID da empresa do script embed
-    const script = document.currentScript as HTMLScriptElement | null;
-    const empresaId = script?.getAttribute('data-empresa');
-
+    // ✅ Pega os dados injetados pelo plugin WordPress
+    const config = (window as any).WebChatTupitecConfig;
+    const empresaId = config?.empresaId;
 
     if (!empresaId) {
-      console.error('❌ Atributo data-empresa não encontrado no <script>.');
-
+      console.error('❌ Empresa ID não encontrado em window.WebChatTupitecConfig');
       setCarregando(false);
       return;
     }
