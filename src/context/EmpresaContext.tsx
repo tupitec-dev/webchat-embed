@@ -38,20 +38,12 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    // VERSÃO FINAL: Procura pela tag de script que o PHP criou usando o ID que definimos.
-    const scriptTag = document.getElementById('tupitec-chat-script');
-    
-    // Lê o domínio diretamente do atributo 'data-dominio' do script.
-    const dominio = scriptTag?.getAttribute('data-dominio');
-
-    if (dominio) {
-        console.log('✅ Domínio encontrado via data-attribute:', dominio);
-        carregarDados(dominio);
-    } else {
-        // Este erro agora nos diz se a tag principal do script não foi encontrada.
-        console.error('❌ Não foi possível encontrar a tag do script do chat (#tupitec-chat-script) ou o atributo data-dominio.');
-        setCarregando(false);
-    }
+    // --- TESTE COM DOMÍNIO FIXO ---
+    // Ignoramos a busca pelo script e usamos um domínio fixo para o teste.
+    const dominioFixoParaTeste = 'fisiomay.com';
+    console.log(`⚠️ USANDO DOMÍNIO FIXO PARA TESTE: ${dominioFixoParaTeste}`);
+    carregarDados(dominioFixoParaTeste);
+    // -----------------------------
   }, []); // Roda apenas uma vez, quando o chat é montado.
 
   const carregarDados = async (dominio: string) => {
