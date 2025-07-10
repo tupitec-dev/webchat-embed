@@ -38,80 +38,97 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    // ✅ Pega os dados injetados pelo plugin WordPress
-    const config = (window as any).WebChatTupitecConfig;
-    const empresaId = config?.empresaId;
+    let tentativas = 0;
 
-    if (!empresaId) {
-      console.error('❌ Empresa ID não encontrado em window.WebChatTupitecConfig');
-      setCarregando(false);
-      return;
-    }
+    const verificarConfig = () => {
+      const config = (window as any).WebChatTupitecConfig;
+      const empresaId = config?.empresaId;
 
-    console.log('🔍 Buscando dados para empresa ID:', empresaId);
-
-    (async () => {
-      try {
-        const { data: empresas, error: erroEmpresa } = await supabase
-          .from('empresas')
-          .select('*')
-          .eq('id', empresaId)
-          .limit(1);
-
-        if (erroEmpresa) {
-          console.error('❌ Erro ao buscar empresa:', erroEmpresa);
-          setCarregando(false);
-          return;
-        }
-
-        if (!empresas || empresas.length === 0) {
-          console.warn('⚠️ Nenhuma empresa encontrada com ID:', empresaId);
-          setCarregando(false);
-          return;
-        }
-
-        const empresaData = empresas[0];
-        setEmpresa(empresaData);
-        console.log('✅ Empresa encontrada:', empresaData);
-
-        const { data: info, error: erroInfo } = await supabase
-          .from('informacoes_empresa')
-          .select('*')
-          .eq('empresa_id', empresaId);
-
-        if (erroInfo) {
-          console.warn('⚠️ Erro ao buscar informações da empresa:', erroInfo);
-        }
-
-        const infoMap: Record<string, string> = {};
-        info?.forEach((item) => {
-          infoMap[item.chave] = item.valor;
-        });
-        setInformacoes(infoMap);
-        console.log('ℹ️ Informações adicionais:', infoMap);
-
-        const { data: atendentes, error: erroAtendentes } = await supabase
-          .from('atendentes')
-          .select('*')
-          .eq('empresa_id', empresaId);
-
-        if (erroAtendentes) {
-          console.warn('⚠️ Erro ao buscar atendentes:', erroAtendentes);
-        }
-
-        if (atendentes && atendentes.length > 0) {
-          const aleatorio = atendentes[Math.floor(Math.random() * atendentes.length)];
-          setAtendente(aleatorio);
-          console.log('🙋‍♀️ Atendente selecionado:', aleatorio);
-        }
-
-        setCarregando(false);
-      } catch (erro) {
-        console.error('❌ Erro inesperado ao carregar dados da empresa:', erro);
-        setCarregando(false);
+      if (empresaId) {
+        console.log('🔍 Buscando dados para empresa ID:', empresaId);
+        carregarDados(empresaId);
+        return true;
       }
-    })();
+
+      tentativas++;
+      if (tentativas > 20) {
+        console.error('❌ Empresa ID não encontrado em window.WebChatTupitecConfig');
+        setCarregando(false);
+        return true;
+      }
+
+      return false;
+    };
+
+    const intervalo = setInterval(() => {
+      const pronto = verificarConfig();
+      if (pronto) clearInterval(intervalo);
+    }, 250); // Verifica a cada 250ms, por até 5s
+
+    return () => clearInterval(intervalo);
   }, []);
+
+  const carregarDados = async (empresaId: string) => {
+    try {
+      const { data: empresas, error: erroEmpresa } = await supabase
+        .from('empresas')
+        .select('*')
+        .eq('id', empresaId)
+        .limit(1);
+
+      if (erroEmpresa) {
+        console.error('❌ Erro ao buscar empresa:', erroEmpresa);
+        setCarregando(false);
+        return;
+      }
+
+      if (!empresas || empresas.length === 0) {
+        console.warn('⚠️ Nenhuma empresa encontrada com ID:', empresaId);
+        setCarregando(false);
+        return;
+      }
+
+      const empresaData = empresas[0];
+      setEmpresa(empresaData);
+      console.log('✅ Empresa encontrada:', empresaData);
+
+      const { data: info, error: erroInfo } = await supabase
+        .from('informacoes_empresa')
+        .select('*')
+        .eq('empresa_id', empresaId);
+
+      if (erroInfo) {
+        console.warn('⚠️ Erro ao buscar informações da empresa:', erroInfo);
+      }
+
+      const infoMap: Record<string, string> = {};
+      info?.forEach((item) => {
+        infoMap[item.chave] = item.valor;
+      });
+      setInformacoes(infoMap);
+      console.log('ℹ️ Informações adicionais:', infoMap);
+
+      const { data: atendentes, error: erroAtendentes } = await supabase
+        .from('atendentes')
+        .select('*')
+        .eq('empresa_id', empresaId);
+
+      if (erroAtendentes) {
+        console.warn('⚠️ Erro ao buscar atendentes:', erroAtendentes);
+      }
+
+      if (atendentes && atendentes.length > 0) {
+        const aleatorio = atendentes[Math.floor(Math.random() * atendentes.length)];
+        setAtendente(aleatorio);
+        console.log('🙋‍♀️ Atendente selecionado:', aleatorio);
+      }
+
+      setCarregando(false);
+    } catch (erro) {
+      console.error('❌ Erro inesperado ao carregar dados da empresa:', erro);
+      setCarregando(false);
+    }
+  };
 
   return (
     <EmpresaContext.Provider value={{ empresa, informacoes, atendente, carregando }}>
