@@ -40,7 +40,8 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
   useEffect(() => {
     // 🔍 Pega o ID da empresa do script embed
     const script = document.currentScript as HTMLScriptElement | null;
-    const empresaId = script?.getAttribute('data-empresa-id');
+    const empresaId = script?.getAttribute('data-empresa');
+
 
     if (!empresaId) {
       console.error('❌ Atributo data-empresa-id não encontrado no <script>.');
