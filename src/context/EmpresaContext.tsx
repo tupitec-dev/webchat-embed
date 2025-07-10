@@ -38,60 +38,78 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    // ✅ Usa currentScript para capturar dinamicamente o script embed
     const currentScript = document.currentScript as HTMLScriptElement | null;
     const dominio = currentScript?.getAttribute('data-dominio') || window.location.hostname;
 
     if (!dominio) {
-      console.error('Domínio não encontrado no script embed.');
+      console.error('❌ Domínio não encontrado no script embed.');
       setCarregando(false);
       return;
     }
 
+    console.log('🔍 Buscando dados para o domínio:', dominio);
+
     (async () => {
       try {
-        // 1. Buscar dados da empresa pelo domínio
+        // 1. Buscar empresa pelo domínio
         const { data: empresas, error: erroEmpresa } = await supabase
           .from('empresas')
           .select('*')
           .eq('dominio', dominio)
           .limit(1);
 
-        if (erroEmpresa || !empresas || empresas.length === 0) {
-          console.error('Erro ao buscar empresa:', erroEmpresa);
+        if (erroEmpresa) {
+          console.error('❌ Erro ao buscar empresa:', erroEmpresa);
+          setCarregando(false);
+          return;
+        }
+
+        if (!empresas || empresas.length === 0) {
+          console.warn('⚠️ Nenhuma empresa encontrada para o domínio:', dominio);
           setCarregando(false);
           return;
         }
 
         const empresaData = empresas[0];
         setEmpresa(empresaData);
+        console.log('✅ Empresa encontrada:', empresaData);
 
-        // 2. Buscar informacoes_empresa
-        const { data: info } = await supabase
+        // 2. Buscar informações adicionais
+        const { data: info, error: erroInfo } = await supabase
           .from('informacoes_empresa')
           .select('*')
           .eq('empresa_id', empresaData.id);
+
+        if (erroInfo) {
+          console.warn('⚠️ Erro ao buscar informações da empresa:', erroInfo);
+        }
 
         const infoMap: Record<string, string> = {};
         info?.forEach((item) => {
           infoMap[item.chave] = item.valor;
         });
         setInformacoes(infoMap);
+        console.log('ℹ️ Informações adicionais:', infoMap);
 
         // 3. Buscar atendentes
-        const { data: atendentes } = await supabase
+        const { data: atendentes, error: erroAtendentes } = await supabase
           .from('atendentes')
           .select('*')
           .eq('empresa_id', empresaData.id);
 
+        if (erroAtendentes) {
+          console.warn('⚠️ Erro ao buscar atendentes:', erroAtendentes);
+        }
+
         if (atendentes && atendentes.length > 0) {
           const aleatorio = atendentes[Math.floor(Math.random() * atendentes.length)];
           setAtendente(aleatorio);
+          console.log('🙋‍♀️ Atendente selecionado:', aleatorio);
         }
 
         setCarregando(false);
       } catch (erro) {
-        console.error('Erro inesperado no carregamento da empresa:', erro);
+        console.error('❌ Erro inesperado ao carregar dados da empresa:', erro);
         setCarregando(false);
       }
     })();
