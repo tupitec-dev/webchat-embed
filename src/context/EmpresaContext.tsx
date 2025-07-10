@@ -42,7 +42,8 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
 
     const verificarConfig = () => {
       const config = (window as any).WebChatTupitecConfig;
-      const empresaId = config?.empresaId;
+      // Garante que um ID vazio (empresaId: '') seja tratado como não encontrado
+      const empresaId = config?.empresaId && config.empresaId.trim();
 
       if (empresaId) {
         console.log('🔍 Buscando dados para empresa ID:', empresaId);
@@ -52,9 +53,12 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
 
       tentativas++;
       if (tentativas > 20) {
-        console.error('❌ Empresa ID não encontrado em window.WebChatTupitecConfig');
-        setCarregando(false);
-        return true;
+        // --- ATUALIZAÇÃO INICIA AQUI ---
+        // Se o ID não for encontrado, usa o ID padrão '21' para teste.
+        console.warn('⚠️ ID da empresa não encontrado. Usando ID padrão para teste: 21');
+        carregarDados('21');
+        return true; // Para o intervalo
+        // --- ATUALIZAÇÃO TERMINA AQUI ---
       }
 
       return false;
