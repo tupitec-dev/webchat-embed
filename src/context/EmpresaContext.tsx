@@ -38,13 +38,18 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    // --- TESTE COM DOMÍNIO FIXO ---
-    // Ignoramos a busca pelo script e usamos um domínio fixo para o teste.
-    const dominioFixoParaTeste = 'fisiomay.com';
-    console.log(`⚠️ USANDO DOMÍNIO FIXO PARA TESTE: ${dominioFixoParaTeste}`);
-    carregarDados(dominioFixoParaTeste);
-    // -----------------------------
-  }, []); // Roda apenas uma vez, quando o chat é montado.
+    // Captura o domínio diretamente da URL (ex: ?dominio=fisiomay.com)
+    const params = new URLSearchParams(window.location.search);
+    const dominio = params.get('dominio') || window.location.hostname;
+
+    if (dominio) {
+      console.log('🌐 Buscando empresa pelo domínio:', dominio);
+      carregarDados(dominio);
+    } else {
+      console.error('❌ Domínio não encontrado na URL.');
+      setCarregando(false);
+    }
+  }, []);
 
   const carregarDados = async (dominio: string) => {
     try {
@@ -69,7 +74,7 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
       const empresaData = empresas[0];
       setEmpresa(empresaData);
       console.log('✅ Empresa encontrada:', empresaData);
-      
+
       const empresaId = empresaData.id;
 
       const { data: info, error: erroInfo } = await supabase
@@ -82,7 +87,9 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
       }
 
       const infoMap: Record<string, string> = {};
-      info?.forEach((item) => { infoMap[item.chave] = item.valor; });
+      info?.forEach((item) => {
+        infoMap[item.chave] = item.valor;
+      });
       setInformacoes(infoMap);
 
       const { data: atendentes } = await supabase
