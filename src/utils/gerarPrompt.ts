@@ -13,6 +13,12 @@ export function gerarPromptPersonalizado({
   empresa,
   informacoes,
 }: GerarPromptParams): string {
+  const descricao = informacoes['descricao'] || '';
+  const outrosDados = Object.entries(informacoes)
+    .filter(([chave]) => chave !== 'descricao')
+    .map(([chave, valor]) => `- ${chave}: ${valor}`)
+    .join('\n');
+
   return `
 Você é ${atendente.nome}, um atendente virtual da empresa ${empresa.nome}, reconhecida por oferecer atendimento humanizado, prestativo e cordial.
 
@@ -32,8 +38,10 @@ Diretrizes de atendimento:
 - Se o cliente pedir para falar com um atendente humano, informe com gentileza que ele será redirecionado e prepare um resumo da conversa para o atendente humano.
 
 Informações da empresa:
-- Horário de funcionamento: ${informacoes['horario_funcionamento'] || 'Não informado'}
-- Descrição: ${informacoes['descricao'] || 'Nenhuma descrição disponível'}
+${descricao ? `\n${descricao}\n` : '\nNenhuma descrição disponível\n'}
+
+Outros dados relevantes:
+${outrosDados || '- Nenhuma informação adicional disponível'}
 
 Com base nessas informações e no contexto da conversa, responda à próxima mensagem de forma natural, simpática e eficiente.
   `.trim();

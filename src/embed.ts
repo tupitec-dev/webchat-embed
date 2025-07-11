@@ -1,5 +1,4 @@
 (() => {
-  // Obtém configurações do script ou da variável global
   let config = (window as any).WebChatTupitecConfig || {};
   const scriptTag = document.currentScript as HTMLScriptElement | null;
 
@@ -8,56 +7,72 @@
       ...config,
       cor: scriptTag.getAttribute('data-cor') || config.cor || '#007bff',
       posicao: scriptTag.getAttribute('data-posicao') || config.posicao || 'bottom-right',
-      icone: scriptTag.getAttribute('data-icone') || config.icone || '💬',
+      icone: scriptTag.getAttribute('data-icone') || config.icone || '',
       dominio: scriptTag.getAttribute('data-dominio') || config.dominio || window.location.hostname,
       empresaId: scriptTag.getAttribute('data-empresaid') || config.empresaId || '',
     };
-  } else {
-    config = {
-      cor: config.cor || '#007bff',
-      posicao: config.posicao || 'bottom-right',
-      icone: config.icone || '💬',
-      dominio: config.dominio || window.location.hostname,
-      empresaId: config.empresaId || '',
-    };
   }
 
-  // Cria botão flutuante
+  const posicoes: Record<string, Partial<CSSStyleDeclaration>> = {
+    'bottom-right': { bottom: '20px', right: '20px' },
+    'bottom-left': { bottom: '20px', left: '20px' },
+    'top-right': { top: '20px', right: '20px' },
+    'top-left': { top: '20px', left: '20px' },
+  };
+
+  const posicaoStyle = posicoes[config.posicao] || posicoes['bottom-right'];
+
+  // Cria botão
   const botaoChat = document.createElement('button');
-  botaoChat.innerText = config.icone;
-  botaoChat.style.position = 'fixed';
-  botaoChat.style.bottom = config.posicao.includes('bottom') ? '20px' : 'unset';
-  botaoChat.style.top = config.posicao.includes('top') ? '20px' : 'unset';
-  botaoChat.style.right = config.posicao.includes('right') ? '20px' : 'unset';
-  botaoChat.style.left = config.posicao.includes('left') ? '20px' : 'unset';
-  botaoChat.style.backgroundColor = config.cor;
-  botaoChat.style.color = '#fff';
-  botaoChat.style.border = 'none';
-  botaoChat.style.borderRadius = '50%';
-  botaoChat.style.width = '56px';
-  botaoChat.style.height = '56px';
-  botaoChat.style.fontSize = '24px';
-  botaoChat.style.cursor = 'pointer';
-  botaoChat.style.zIndex = '9999';
+  botaoChat.setAttribute('aria-label', 'Abrir chat');
+
+  Object.assign(botaoChat.style, {
+    position: 'fixed',
+    background: 'transparent',
+    border: 'none',
+    padding: '0',
+    margin: '0',
+    cursor: 'pointer',
+    zIndex: '9999',
+    ...posicaoStyle,
+  });
+
+  if (config.icone.startsWith('http')) {
+    // Se for uma URL (ex: SVG externo)
+    const img = document.createElement('img');
+    img.src = config.icone;
+    img.alt = 'Abrir chat';
+    img.style.width = '64px';
+    img.style.height = '64px';
+    botaoChat.appendChild(img);
+  } else {
+    // Ícone padrão (SVG inline)
+    botaoChat.innerHTML = `
+      <svg viewBox="0 0 64 64" width="64" height="64" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="30" fill="${config.cor}" />
+        <path d="M20 24h24v16H23l-3 4V24z" fill="#fff" />
+      </svg>
+    `;
+  }
+
   document.body.appendChild(botaoChat);
 
-  // Cria iframe oculto
   const iframeChat = document.createElement('iframe');
   iframeChat.src = `https://webchat-embed.vercel.app/?dominio=${encodeURIComponent(config.dominio)}&empresaId=${encodeURIComponent(config.empresaId)}`;
-  iframeChat.style.position = 'fixed';
-  iframeChat.style.bottom = config.posicao.includes('bottom') ? '80px' : 'unset';
-  iframeChat.style.top = config.posicao.includes('top') ? '80px' : 'unset';
-  iframeChat.style.right = config.posicao.includes('right') ? '20px' : 'unset';
-  iframeChat.style.left = config.posicao.includes('left') ? '20px' : 'unset';
-  iframeChat.style.width = '350px';
-  iframeChat.style.height = '500px';
-  iframeChat.style.border = 'none';
-  iframeChat.style.zIndex = '9999';
-  iframeChat.style.boxShadow = '0 0 12px rgba(0, 0, 0, 0.3)';
-  iframeChat.style.display = 'none';
+  Object.assign(iframeChat.style, {
+    position: 'fixed',
+    width: '350px',
+    height: '500px',
+    border: 'none',
+    zIndex: '9999',
+    boxShadow: '0 0 12px rgba(0, 0, 0, 0.3)',
+    display: 'none',
+    ...(config.posicao.includes('bottom') ? { bottom: '80px' } : { top: '80px' }),
+    ...(config.posicao.includes('right') ? { right: '20px' } : { left: '20px' }),
+  });
+
   document.body.appendChild(iframeChat);
 
-  // Alterna visibilidade
   botaoChat.addEventListener('click', () => {
     const visivel = iframeChat.style.display === 'block';
     iframeChat.style.display = visivel ? 'none' : 'block';

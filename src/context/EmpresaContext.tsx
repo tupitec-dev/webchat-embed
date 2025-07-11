@@ -38,7 +38,6 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
-    // Captura o domínio diretamente da URL (ex: ?dominio=fisiomay.com)
     const params = new URLSearchParams(window.location.search);
     const dominio = params.get('dominio') || window.location.hostname;
 
@@ -87,9 +86,14 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
       }
 
       const infoMap: Record<string, string> = {};
+
       info?.forEach((item) => {
-        infoMap[item.chave] = item.valor;
+        // Junta valor + descrição, se ambas existirem
+        const valor = item.valor?.trim() || '';
+        const descricao = item.descricao?.trim() || '';
+        infoMap[item.chave] = descricao ? `${valor} - ${descricao}` : valor;
       });
+
       setInformacoes(infoMap);
 
       const { data: atendentes } = await supabase

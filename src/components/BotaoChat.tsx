@@ -5,14 +5,11 @@ type BotaoChatProps = {
 };
 
 const BotaoChat: React.FC<BotaoChatProps> = ({ onClick }) => {
-  // Lê o script que carregou o chat
   const scriptTag = document.querySelector('script[data-empresa]');
 
-  const cor = scriptTag?.getAttribute('data-cor') || '#007bff';
   const posicao = scriptTag?.getAttribute('data-posicao') || 'bottom-right';
-  const icone = scriptTag?.getAttribute('data-icone') || '💬';
+  const icone = scriptTag?.getAttribute('data-icone') || '';
 
-  // Define estilo da posição
   const posicoes: Record<string, React.CSSProperties> = {
     'bottom-right': { bottom: '20px', right: '20px' },
     'bottom-left': { bottom: '20px', left: '20px' },
@@ -22,25 +19,40 @@ const BotaoChat: React.FC<BotaoChatProps> = ({ onClick }) => {
 
   const posicaoStyle = posicoes[posicao] || posicoes['bottom-right'];
 
+  const isUrl = icone.startsWith('http');
+
   return (
     <button
       onClick={onClick}
       style={{
         position: 'fixed',
-        width: '56px',
-        height: '56px',
-        borderRadius: '50%',
-        backgroundColor: cor,
-        color: '#fff',
-        fontSize: '24px',
+        background: 'transparent',
         border: 'none',
+        padding: 0,
+        margin: 0,
         cursor: 'pointer',
-        boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
         zIndex: 9999,
         ...posicaoStyle,
       }}
+      aria-label="Abrir chat"
     >
-      {icone}
+      {isUrl ? (
+        <img
+          src={icone}
+          alt="Abrir chat"
+          style={{ width: '64px', height: '64px' }}
+        />
+      ) : (
+        <svg
+          viewBox="0 0 64 64"
+          width="64"
+          height="64"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="32" cy="32" r="30" fill="#007bff" />
+          <path d="M20 24h24v16H23l-3 4V24z" fill="#fff" />
+        </svg>
+      )}
     </button>
   );
 };

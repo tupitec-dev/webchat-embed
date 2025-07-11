@@ -5,6 +5,7 @@ const openai = new OpenAI({
   dangerouslyAllowBrowser: true, // necessário para funcionar no front-end
 });
 
+// Envia a mensagem para a IA com logging de tempo e tratamento de erro
 export async function enviarMensagemParaIA({
   promptSistema,
   mensagens,
@@ -12,9 +13,11 @@ export async function enviarMensagemParaIA({
   promptSistema: string;
   mensagens: { role: 'user' | 'assistant' | 'system'; content: string }[];
 }): Promise<string> {
+  const inicio = Date.now();
+
   try {
     const chat = await openai.chat.completions.create({
-      model: 'gpt-4o', // ou 'gpt-3.5-turbo' se quiser reduzir custos
+      model: 'gpt-4o', // ou 'gpt-3.5-turbo' para reduzir custo
       messages: [
         { role: 'system', content: promptSistema },
         ...mensagens,
@@ -22,14 +25,16 @@ export async function enviarMensagemParaIA({
       temperature: 0.7,
     });
 
-    return chat.choices[0]?.message?.content || '';
+    const resposta = chat.choices[0]?.message?.content || '';
+    console.log(`🧠 Resposta da IA recebida em ${Date.now() - inicio}ms`);
+    return resposta;
   } catch (erro) {
-    console.error('Erro ao conversar com a IA:', erro);
+    console.error('❌ Erro ao conversar com a IA:', erro);
     return 'Desculpe, algo deu errado. Tente novamente mais tarde.';
   }
 }
 
-// ✅ Nova função: gerar resumo da conversa
+// Gera um resumo da conversa para humanos
 export async function gerarResumoDaConversa(
   mensagens: { autor: 'cliente' | 'ia'; texto: string }[]
 ): Promise<string> {
@@ -44,7 +49,8 @@ export async function gerarResumoDaConversa(
       messages: [
         {
           role: 'system',
-          content: 'Resuma a conversa de forma clara e objetiva, em poucas linhas. Foque nos principais pontos, dúvidas ou solicitações do cliente.',
+          content:
+            'Resuma a conversa de forma clara e objetiva, em poucas linhas. Foque nos principais pontos, dúvidas ou solicitações do cliente.',
         },
         {
           role: 'user',
@@ -56,7 +62,7 @@ export async function gerarResumoDaConversa(
 
     return chat.choices[0]?.message?.content || 'Resumo indisponível.';
   } catch (erro) {
-    console.error('Erro ao gerar resumo:', erro);
+    console.error('❌ Erro ao gerar resumo:', erro);
     return 'Resumo indisponível.';
   }
 }

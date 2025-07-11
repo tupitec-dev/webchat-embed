@@ -1,6 +1,5 @@
 import { supabase } from '../lib/supabase';
 
-
 interface Mensagem {
   autor: 'cliente' | 'ia';
   texto: string;
@@ -17,12 +16,22 @@ interface NovaConversa {
   resumo?: string;
 }
 
+// Salva a conversa no Supabase
 export async function salvarConversa(conversa: NovaConversa) {
-  const { error } = await supabase.from('conversas').insert([conversa]);
+  try {
+    if (!conversa.empresa_id || !conversa.atendente_nome || conversa.mensagens.length === 0) {
+      console.warn('⚠️ Dados incompletos para salvar a conversa:', conversa);
+      return;
+    }
 
-  if (error) {
-    console.error('Erro ao salvar conversa no Supabase:', error.message);
-  } else {
-    //console.log('✅ Conversa salva com sucesso!');
+    const { error } = await supabase.from('conversas').insert([conversa]);
+
+    if (error) {
+      console.error('❌ Erro ao salvar conversa no Supabase:', error.message);
+    } else {
+      console.log('✅ Conversa salva com sucesso.');
+    }
+  } catch (erro) {
+    console.error('❌ Erro inesperado ao salvar conversa:', erro);
   }
 }
