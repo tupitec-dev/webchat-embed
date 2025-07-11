@@ -6,7 +6,7 @@ import { salvarConversa } from '../services/conversaService';
 import FormularioLead from './FormularioLead';
 
 interface JanelaChatProps {
-  onFechar: () => void;
+  onFechar?: () => void; // ⬅️ agora é opcional
 }
 
 interface Mensagem {
@@ -163,7 +163,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
           }}
           aria-label="Fechar chat"
         >
-          ✖
+          
         </button>
       </div>
 
