@@ -6,7 +6,7 @@ import { salvarConversa } from '../services/conversaService';
 import FormularioLead from './FormularioLead';
 
 interface JanelaChatProps {
-  onFechar: () => void; // permanece para possível uso futuro
+  onFechar: () => void;
 }
 
 interface Mensagem {
@@ -17,7 +17,7 @@ interface Mensagem {
 
 const TEMPO_INATIVIDADE_MS = 5 * 60 * 1000;
 
-const JanelaChat: React.FC<JanelaChatProps> = () => {
+const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [texto, setTexto] = useState('');
   const [carregando, setCarregando] = useState(false);
@@ -128,9 +128,6 @@ const JanelaChat: React.FC<JanelaChatProps> = () => {
   return (
     <div
       style={{
-        position: 'fixed',
-        bottom: '90px',
-        right: '20px',
         width: '350px',
         height: '500px',
         display: 'flex',
@@ -138,10 +135,8 @@ const JanelaChat: React.FC<JanelaChatProps> = () => {
         fontFamily: 'Arial, sans-serif',
         backgroundColor: '#fff',
         border: '1px solid #ccc',
-        borderRadius: '8px',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
+        boxSizing: 'border-box',
         overflow: 'hidden',
-        zIndex: 9999,
       }}
     >
       {/* Header */}
@@ -151,12 +146,25 @@ const JanelaChat: React.FC<JanelaChatProps> = () => {
           color: '#fff',
           padding: '10px',
           display: 'flex',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
           alignItems: 'center',
           flexShrink: 0,
         }}
       >
         <strong>{atendente?.nome || 'Atendente'}</strong>
+        <button
+          onClick={onFechar}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#fff',
+            fontSize: '18px',
+            cursor: 'pointer',
+          }}
+          aria-label="Fechar chat"
+        >
+          ✖
+        </button>
       </div>
 
       {/* Mensagens */}
