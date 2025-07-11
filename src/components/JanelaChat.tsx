@@ -242,6 +242,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
             borderRadius: 4,
             border: '1px solid #ccc',
             boxSizing: 'border-box',
+            fontSize: '16px', // 👈 adicione isso!
           }}
         />
         <button
