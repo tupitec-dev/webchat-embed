@@ -130,7 +130,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
     <div
       style={{
         width: '350px',
-        height: '550px',
+        height: '500px',
         display: 'flex',
         flexDirection: 'column',
         fontFamily: 'Arial, sans-serif',
