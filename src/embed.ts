@@ -62,7 +62,7 @@
   Object.assign(iframeChat.style, {
     position: 'fixed',
     width: '350px',
-    height: 'calc(100% - 100px)', // usa o espaço disponível, com limite
+    height: '500px', // <-- CORRIGIDO // usa o espaço disponível, com limite
     maxHeight: '500px',
     border: 'none',
     zIndex: '9999',
