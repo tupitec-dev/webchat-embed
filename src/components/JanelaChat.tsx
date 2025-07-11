@@ -6,7 +6,7 @@ import { salvarConversa } from '../services/conversaService';
 import FormularioLead from './FormularioLead';
 
 interface JanelaChatProps {
-  onFechar?: () => void; // ⬅️ agora é opcional
+  onFechar?: () => void;
 }
 
 interface Mensagem {
@@ -58,6 +58,20 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
     });
   };
 
+  const detectarDespedida = (texto: string): boolean => {
+    const despedidas = [
+      'obrigado', 'obrigada', 'valeu', 'até logo',
+      'até mais', 'até breve', 'boa noite',
+      'bom descanso', 'tchau', 'flw', 'falou'
+    ];
+    const textoMinusculo = texto.toLowerCase();
+    const mensagensCliente = mensagens.filter(m => m.autor === 'cliente').length;
+    return (
+      mensagensCliente >= 2 &&
+      despedidas.some(palavra => textoMinusculo.includes(palavra))
+    );
+  };
+
   const enviar = async () => {
     if (!texto.trim()) return;
 
@@ -67,10 +81,12 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       hora: new Date().toISOString(),
     };
 
-    setMensagens((m) => [...m, novaMensagem]);
+    setMensagens(m => [...m, novaMensagem]);
     setTexto('');
     setCarregando(true);
     iniciarTimeoutInatividade();
+
+    const encerrar = detectarDespedida(novaMensagem.texto);
 
     try {
       if (!empresa || !atendente) return;
@@ -87,7 +103,12 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
         hora: new Date().toISOString(),
       };
 
-      setMensagens((m) => [...m, respostaMensagem]);
+      setMensagens(m => [...m, respostaMensagem]);
+
+      if (encerrar) {
+        await salvar();
+      }
+
     } catch (err) {
       console.error('Erro na IA:', err);
     } finally {
@@ -111,7 +132,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
           backgroundColor: '#fff',
           padding: 16,
           boxSizing: 'border-box',
-          border: 'none', // opcional: remove a borda
+          border: 'none',
         }}
       >
         <FormularioLead
@@ -124,7 +145,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       </div>
     );
   }
-
 
   return (
     <div
@@ -242,7 +262,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
             borderRadius: 4,
             border: '1px solid #ccc',
             boxSizing: 'border-box',
-            fontSize: '16px', // 👈 adicione isso!
+            fontSize: '16px',
           }}
         />
         <button
