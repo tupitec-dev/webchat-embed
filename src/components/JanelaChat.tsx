@@ -128,9 +128,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
   return (
     <div
       style={{
-        position: 'fixed',
-        bottom: '90px',
-        right: '20px',
         width: '350px',
         height: '500px',
         display: 'flex',
@@ -138,11 +135,8 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
         fontFamily: 'Arial, sans-serif',
         backgroundColor: '#fff',
         border: '1px solid #ccc',
-        borderRadius: '8px',
-        boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
         boxSizing: 'border-box',
         overflow: 'hidden',
-        zIndex: 9999,
       }}
     >
       {/* Header */}
@@ -164,13 +158,12 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
             background: 'transparent',
             border: 'none',
             color: '#fff',
-            fontSize: '20px',
+            fontSize: '18px',
             cursor: 'pointer',
-            lineHeight: 1,
           }}
-          aria-label="Minimizar chat"
+          aria-label="Fechar chat"
         >
-          &minus;
+          ✖
         </button>
       </div>
 
