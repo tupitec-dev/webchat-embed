@@ -1,9 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useEmpresa } from '../context/EmpresaContext';
 import { gerarPromptPersonalizado } from '../utils/gerarPrompt';
-import {
-  enviarMensagemParaIA,
-} from '../services/chatService';
+import { enviarMensagemParaIA } from '../services/chatService';
 import { salvarConversa } from '../services/conversaService';
 import FormularioLead from './FormularioLead';
 
@@ -17,14 +15,14 @@ interface Mensagem {
   hora: string;
 }
 
-const TEMPO_INATIVIDADE_MS = 5 * 60 * 1000; // 5 minutos
+const TEMPO_INATIVIDADE_MS = 5 * 60 * 1000;
 
 const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [texto, setTexto] = useState('');
   const [carregando, setCarregando] = useState(false);
-  const [clienteNome, setClienteNome] = useState<string>('');
-  const [contato, setContato] = useState<string>('');
+  const [clienteNome, setClienteNome] = useState('');
+  const [contato, setContato] = useState('');
   const [leadPreenchido, setLeadPreenchido] = useState(false);
 
   const mensagensRef = useRef<HTMLDivElement>(null);
@@ -78,7 +76,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       if (!empresa || !atendente) return;
 
       const prompt = gerarPromptPersonalizado({ empresa, informacoes, atendente });
-
       const respostaTexto = await enviarMensagemParaIA({
         promptSistema: prompt,
         mensagens: [{ role: 'user', content: novaMensagem.texto }],
@@ -104,7 +101,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
 
   if (!leadPreenchido) {
     return (
-      <div style={{ padding: 16, width: '100%', boxSizing: 'border-box' }}>
+      <div style={{ padding: 16, width: '100%', height: '100%', boxSizing: 'border-box' }}>
         <FormularioLead
           onSubmit={(nome, tel) => {
             setClienteNome(nome);
@@ -126,8 +123,10 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
         fontFamily: 'Arial, sans-serif',
         backgroundColor: '#fff',
         border: '1px solid #ccc',
+        overflow: 'hidden',
       }}
     >
+      {/* HEADER */}
       <div
         style={{
           backgroundColor: '#007bff',
@@ -148,14 +147,21 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
             fontSize: '18px',
             cursor: 'pointer',
           }}
+          aria-label="Fechar chat"
         >
           ✖
         </button>
       </div>
 
+      {/* MENSAGENS */}
       <div
         ref={mensagensRef}
-        style={{ flex: 1, overflowY: 'auto', padding: 10 }}
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: 10,
+          boxSizing: 'border-box',
+        }}
       >
         {mensagens.map((msg, i) => (
           <div
@@ -195,12 +201,14 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
         )}
       </div>
 
+      {/* FOOTER FIXO */}
       <div
         style={{
           padding: 10,
           display: 'flex',
           borderTop: '1px solid #ccc',
           gap: 8,
+          backgroundColor: '#fff',
         }}
       >
         <input
@@ -209,7 +217,12 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
           value={texto}
           onChange={(e) => setTexto(e.target.value)}
           onKeyDown={handleKeyDown}
-          style={{ flex: 1, padding: 8, borderRadius: 4, border: '1px solid #ccc' }}
+          style={{
+            flex: 1,
+            padding: 8,
+            borderRadius: 4,
+            border: '1px solid #ccc',
+          }}
         />
         <button
           onClick={enviar}
