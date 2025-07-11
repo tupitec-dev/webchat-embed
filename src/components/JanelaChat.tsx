@@ -40,6 +40,18 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleUnload = () => {
+      salvar(); // salvar sem resumo se sair da página
+    };
+
+    window.addEventListener('beforeunload', handleUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, [mensagens, clienteNome, contato]);
+
+  
   const iniciarTimeoutInatividade = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = window.setTimeout(async () => {
