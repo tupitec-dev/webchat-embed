@@ -47,7 +47,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
     }, TEMPO_INATIVIDADE_MS);
   };
 
-  const salvar = async () => {
+  const salvar = async (resumo?: string) => {
     if (!empresa || !atendente) return;
     await salvarConversa({
       empresa_id: parseInt(empresa.id),
@@ -55,21 +55,38 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       mensagens,
       cliente_nome: clienteNome,
       contato,
+      resumo,
     });
   };
 
-  const detectarDespedida = (texto: string): boolean => {
-    const despedidas = [
-      'obrigado', 'obrigada', 'valeu', 'até logo',
-      'até mais', 'até breve', 'boa noite',
-      'bom descanso', 'tchau', 'flw', 'falou'
+  const detectarPedidoDeAtendente = (texto: string): boolean => {
+    const frases = [
+      'falar com atendente',
+      'me chama no whatsapp',
+      'pode me ligar',
+      'quero atendimento humano',
+      'quero falar com alguém',
+      'alguém me chama'
     ];
     const textoMinusculo = texto.toLowerCase();
-    const mensagensCliente = mensagens.filter(m => m.autor === 'cliente').length;
-    return (
-      mensagensCliente >= 2 &&
-      despedidas.some(palavra => textoMinusculo.includes(palavra))
-    );
+    return frases.some(frase => textoMinusculo.includes(frase));
+  };
+
+  const gerarResumoDaConversa = async (): Promise<string> => {
+    const mensagensCliente = mensagens
+      .filter(m => m.autor === 'cliente')
+      .map(m => m.texto)
+      .join('\n');
+
+    const prompt = `Resuma de forma clara e breve a seguinte conversa de um cliente com um atendente virtual:\n\n${mensagensCliente}`;
+    try {
+      return await enviarMensagemParaIA({
+        promptSistema: prompt,
+        mensagens: [],
+      });
+    } catch {
+      return 'Resumo indisponível.';
+    }
   };
 
   const enviar = async () => {
@@ -86,10 +103,23 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
     setCarregando(true);
     iniciarTimeoutInatividade();
 
-    const encerrar = detectarDespedida(novaMensagem.texto);
+    const pediuAtendente = detectarPedidoDeAtendente(novaMensagem.texto);
 
     try {
       if (!empresa || !atendente) return;
+
+      if (pediuAtendente) {
+        const resumo = await gerarResumoDaConversa();
+        await salvar(resumo);
+
+        const resposta: Mensagem = {
+          autor: 'ia',
+          texto: 'Claro! Um de nossos atendentes entrará em contato com você pelo WhatsApp em breve. Obrigado!',
+          hora: new Date().toISOString(),
+        };
+        setMensagens(m => [...m, resposta]);
+        return;
+      }
 
       const prompt = gerarPromptPersonalizado({ empresa, informacoes, atendente });
       const respostaTexto = await enviarMensagemParaIA({
@@ -104,10 +134,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       };
 
       setMensagens(m => [...m, respostaMensagem]);
-
-      if (encerrar) {
-        await salvar();
-      }
 
     } catch (err) {
       console.error('Erro na IA:', err);

@@ -1,12 +1,12 @@
 import { supabase } from '../lib/supabase';
 
-interface Mensagem {
+export interface Mensagem {
   autor: 'cliente' | 'ia';
   texto: string;
   hora: string; // ISO string
 }
 
-interface NovaConversa {
+export interface NovaConversa {
   empresa_id: number;
   atendente_nome: string;
   mensagens: Mensagem[];
