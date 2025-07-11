@@ -129,10 +129,8 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
   return (
     <div
       style={{
-        width: '100%',
-        maxWidth: '400px',
-        height: '100%',
-        maxHeight: '600px',
+        width: '350px',
+        height: '550px',
         display: 'flex',
         flexDirection: 'column',
         fontFamily: 'Arial, sans-serif',
@@ -142,7 +140,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
         overflow: 'hidden',
       }}
     >
-
       {/* Header */}
       <div
         style={{
