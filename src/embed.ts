@@ -22,7 +22,7 @@
 
   const posicaoStyle = posicoes[config.posicao] || posicoes['bottom-right'];
 
-  // Cria botão
+  // Cria botão flutuante
   const botaoChat = document.createElement('button');
   botaoChat.setAttribute('aria-label', 'Abrir chat');
 
@@ -38,7 +38,6 @@
   });
 
   if (config.icone.startsWith('http')) {
-    // Se for uma URL (ex: SVG externo)
     const img = document.createElement('img');
     img.src = config.icone;
     img.alt = 'Abrir chat';
@@ -46,7 +45,6 @@
     img.style.height = '64px';
     botaoChat.appendChild(img);
   } else {
-    // Ícone padrão (SVG inline)
     botaoChat.innerHTML = `
       <svg viewBox="0 0 64 64" width="64" height="64" xmlns="http://www.w3.org/2000/svg">
         <circle cx="32" cy="32" r="30" fill="${config.cor}" />
@@ -57,19 +55,25 @@
 
   document.body.appendChild(botaoChat);
 
+  // Cria iframe do chat
   const iframeChat = document.createElement('iframe');
   iframeChat.src = `https://webchat-embed.vercel.app/?dominio=${encodeURIComponent(config.dominio)}&empresaId=${encodeURIComponent(config.empresaId)}`;
+
   Object.assign(iframeChat.style, {
     position: 'fixed',
     width: '350px',
-    height: '500px',
+    height: 'calc(100% - 100px)', // usa o espaço disponível, com limite
+    maxHeight: '500px',
     border: 'none',
     zIndex: '9999',
-    boxShadow: '0 0 12px rgba(0, 0, 0, 0.3)',
     display: 'none',
+    overflow: 'hidden',
+    boxShadow: '0 0 12px rgba(0, 0, 0, 0.3)',
     ...(config.posicao.includes('bottom') ? { bottom: '80px' } : { top: '80px' }),
     ...(config.posicao.includes('right') ? { right: '20px' } : { left: '20px' }),
   });
+
+  iframeChat.setAttribute('scrolling', 'no'); // evita scroll em navegadores mais antigos
 
   document.body.appendChild(iframeChat);
 
