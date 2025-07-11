@@ -156,6 +156,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
           onClick={onFechar}
           style={{
             background: 'transparent',
+            display: 'none',
             border: 'none',
             color: '#fff',
             fontSize: '18px',
@@ -163,7 +164,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
           }}
           aria-label="Fechar chat"
         >
-          
+          ✖
         </button>
       </div>
 
