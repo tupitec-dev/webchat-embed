@@ -32,7 +32,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
 
   useEffect(() => {
     mensagensRef.current?.scrollTo(0, mensagensRef.current.scrollHeight);
-  }, [mensagens]);
+  }, [mensagens, carregando]);
 
   useEffect(() => {
     return () => {
@@ -101,7 +101,14 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
 
   if (!leadPreenchido) {
     return (
-      <div style={{ padding: 16, width: '100%', height: '100%', boxSizing: 'border-box' }}>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+        padding: 16,
+        boxSizing: 'border-box'
+      }}>
         <FormularioLead
           onSubmit={(nome, tel) => {
             setClienteNome(nome);
@@ -114,29 +121,25 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
   }
 
   return (
-    <div
-      style={{
-        width: '100%',
-        height: '100%',
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      fontFamily: 'Arial, sans-serif',
+      backgroundColor: '#fff',
+      border: '1px solid #ccc',
+      boxSizing: 'border-box',
+    }}>
+      {/* Header */}
+      <div style={{
+        backgroundColor: '#007bff',
+        color: '#fff',
+        padding: '10px',
         display: 'flex',
-        flexDirection: 'column',
-        fontFamily: 'Arial, sans-serif',
-        backgroundColor: '#fff',
-        border: '1px solid #ccc',
-        overflow: 'hidden',
-      }}
-    >
-      {/* HEADER */}
-      <div
-        style={{
-          backgroundColor: '#007bff',
-          color: '#fff',
-          padding: '10px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
         <strong>{atendente?.nome || 'Atendente'}</strong>
         <button
           onClick={onFechar}
@@ -153,7 +156,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
         </button>
       </div>
 
-      {/* MENSAGENS */}
+      {/* Mensagens */}
       <div
         ref={mensagensRef}
         style={{
@@ -187,30 +190,27 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
 
         {carregando && (
           <div style={{ textAlign: 'left', marginBottom: '8px' }}>
-            <div
-              style={{
-                display: 'inline-block',
-                backgroundColor: '#e8eaf6',
-                padding: '6px 10px',
-                borderRadius: '12px',
-              }}
-            >
+            <div style={{
+              display: 'inline-block',
+              backgroundColor: '#e8eaf6',
+              padding: '6px 10px',
+              borderRadius: '12px',
+            }}>
               Digitando...
             </div>
           </div>
         )}
       </div>
 
-      {/* FOOTER FIXO */}
-      <div
-        style={{
-          padding: 10,
-          display: 'flex',
-          borderTop: '1px solid #ccc',
-          gap: 8,
-          backgroundColor: '#fff',
-        }}
-      >
+      {/* Footer fixo */}
+      <div style={{
+        padding: 10,
+        display: 'flex',
+        borderTop: '1px solid #ccc',
+        gap: 8,
+        backgroundColor: '#fff',
+        boxSizing: 'border-box',
+      }}>
         <input
           type="text"
           placeholder="Digite sua mensagem..."
@@ -222,6 +222,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
             padding: 8,
             borderRadius: 4,
             border: '1px solid #ccc',
+            boxSizing: 'border-box',
           }}
         />
         <button
