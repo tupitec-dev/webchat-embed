@@ -14,8 +14,9 @@ export function gerarPromptPersonalizado({
   informacoes,
 }: GerarPromptParams): string {
   const descricao = informacoes['descricao'] || '';
+  const whatsappLink = informacoes['whatsappLink'] || 'https://wa.me/seunumerodefault';
   const outrosDados = Object.entries(informacoes)
-    .filter(([chave]) => chave !== 'descricao')
+    .filter(([chave]) => !['descricao', 'whatsappLink'].includes(chave))
     .map(([chave, valor]) => `- ${chave}: ${valor}`)
     .join('\n');
 
@@ -37,7 +38,7 @@ Diretrizes de atendimento:
 - Use seu nome (${atendente.nome}) no final de uma mensagem apenas se for uma despedida ou saudação final.
 - Se o cliente pedir para falar com um atendente humano, informe com gentileza que ele será redirecionado e prepare um resumo da conversa para o atendente humano.
 - Quando precisar incluir um link (como para WhatsApp ou site), **sempre utilize a sintaxe Markdown**, por exemplo:  
-  [Clique aqui para falar no WhatsApp](https://wa.me/5594992948483)  
+  [Clique aqui para falar no WhatsApp](${whatsappLink})  
   Nunca use HTML com \`<a>\` nem \`target="_blank"\`.
 
 Informações da empresa:
