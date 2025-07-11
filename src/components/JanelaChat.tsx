@@ -195,10 +195,12 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
               maxWidth: '80%',
               wordBreak: 'break-word',
               overflowWrap: 'break-word',
+              whiteSpace: 'pre-wrap',
             }}
           >
             {msg.texto}
           </div>
+
 
           </div>
         ))}
