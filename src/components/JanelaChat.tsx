@@ -186,17 +186,20 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
               marginBottom: '8px',
             }}
           >
-            <div
-              style={{
-                display: 'inline-block',
-                backgroundColor: msg.autor === 'cliente' ? '#e0f7fa' : '#e8eaf6',
-                padding: '6px 10px',
-                borderRadius: '12px',
-                maxWidth: '80%',
-              }}
-            >
-              {msg.texto}
-            </div>
+          <div
+            style={{
+              display: 'inline-block',
+              backgroundColor: msg.autor === 'cliente' ? '#e0f7fa' : '#e8eaf6',
+              padding: '6px 10px',
+              borderRadius: '12px',
+              maxWidth: '80%',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
+            }}
+          >
+            {msg.texto}
+          </div>
+
           </div>
         ))}
 
