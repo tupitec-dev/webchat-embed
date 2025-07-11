@@ -66,7 +66,10 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       'pode me ligar',
       'quero atendimento humano',
       'quero falar com alguém',
-      'alguém me chama'
+      'alguém me chama',
+      'quero falar com uma pessoa',
+      'atendente',
+      'pessoa de verdade',
     ];
     const textoMinusculo = texto.toLowerCase();
     return frases.some(frase => textoMinusculo.includes(frase));
@@ -78,7 +81,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       .map(m => m.texto)
       .join('\n');
 
-    const prompt = `Resuma de forma clara e breve a seguinte conversa de um cliente com um atendente virtual:\n\n${mensagensCliente}`;
+    const prompt = `Resuma de forma clara e objetiva a seguinte conversa de um cliente:\n\n${mensagensCliente}`;
     try {
       return await enviarMensagemParaIA({
         promptSistema: prompt,
@@ -114,7 +117,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
 
         const resposta: Mensagem = {
           autor: 'ia',
-          texto: 'Claro! Um de nossos atendentes entrará em contato com você pelo WhatsApp em breve. Obrigado!',
+          texto: 'Claro! Vou te redirecionar para um atendente humano. Para facilitar, preparei um resumo da nossa conversa. Em breve, entraremos em contato com você pelo WhatsApp. Obrigado por conversar comigo 😊',
           hora: new Date().toISOString(),
         };
         setMensagens(m => [...m, resposta]);
