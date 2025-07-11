@@ -17,6 +17,15 @@ interface Mensagem {
 
 const TEMPO_INATIVIDADE_MS = 5 * 60 * 1000;
 
+function formatarMensagem(texto: string): string {
+  const markdownLinks = texto.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+  const comLinks = markdownLinks.replace(/(https?:\/\/[^\s]+)/g, (url) => {
+    if (url.includes('href=')) return url;
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+  });
+  return comLinks;
+}
+
 const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [texto, setTexto] = useState('');
@@ -99,7 +108,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
     if (e.key === 'Enter') enviar();
   };
 
-  // FORMULÁRIO DE LEAD
   if (!leadPreenchido) {
     return (
       <div
@@ -186,22 +194,22 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
               marginBottom: '8px',
             }}
           >
-          <div
-            style={{
-              display: 'inline-block',
-              backgroundColor: msg.autor === 'cliente' ? '#e0f7fa' : '#e8eaf6',
-              padding: '6px 10px',
-              borderRadius: '12px',
-              maxWidth: '80%',
-              wordBreak: 'break-word',
-              overflowWrap: 'break-word',
-              whiteSpace: 'pre-wrap',
-            }}
-          >
-            {msg.texto}
-          </div>
-
-
+            <div
+              style={{
+                display: 'inline-block',
+                backgroundColor: msg.autor === 'cliente' ? '#e0f7fa' : '#e8eaf6',
+                padding: '6px 10px',
+                borderRadius: '12px',
+                maxWidth: '80%',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word',
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              <span
+                dangerouslySetInnerHTML={{ __html: formatarMensagem(msg.texto) }}
+              />
+            </div>
           </div>
         ))}
 
