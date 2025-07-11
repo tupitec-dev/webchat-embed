@@ -15,6 +15,7 @@ export function gerarPromptPersonalizado({
 }: GerarPromptParams): string {
   const descricao = informacoes['descricao'] || '';
   const whatsappLink = informacoes['whatsappLink'] || 'https://wa.me/seunumerodefault';
+
   const outrosDados = Object.entries(informacoes)
     .filter(([chave]) => !['descricao', 'whatsappLink'].includes(chave))
     .map(([chave, valor]) => `- ${chave}: ${valor}`)
@@ -37,9 +38,8 @@ Diretrizes de atendimento:
 - Seja objetivo, simpático e direto ao ponto.
 - Use seu nome (${atendente.nome}) no final de uma mensagem apenas se for uma despedida ou saudação final.
 - Se o cliente pedir para falar com um atendente humano, informe com gentileza que ele será redirecionado e prepare um resumo da conversa para o atendente humano.
-- Quando precisar incluir um link (como para WhatsApp ou site), **sempre utilize a sintaxe Markdown**, por exemplo:  
-  [Clique aqui para falar no WhatsApp](${whatsappLink})  
-  Nunca use HTML com \`<a>\` nem \`target="_blank"\`.
+- Quando precisar informar um link (como para WhatsApp ou site), apenas escreva o endereço como texto, sem usar HTML ou qualquer formatação.  
+  Exemplo: ${whatsappLink}
 
 Informações da empresa:
 ${descricao ? `\n${descricao}\n` : '\nNenhuma descrição disponível\n'}
