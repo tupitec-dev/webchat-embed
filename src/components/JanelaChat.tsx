@@ -99,16 +99,22 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
     if (e.key === 'Enter') enviar();
   };
 
+  // FORMULÁRIO DE LEAD
   if (!leadPreenchido) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-        padding: 16,
-        boxSizing: 'border-box'
-      }}>
+      <div
+        style={{
+          width: '350px',
+          height: '500px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#fff',
+          padding: 16,
+          boxSizing: 'border-box',
+          border: '1px solid #ccc',
+        }}
+      >
         <FormularioLead
           onSubmit={(nome, tel) => {
             setClienteNome(nome);
@@ -210,7 +216,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
         )}
       </div>
 
-      {/* Footer fixo */}
+      {/* Footer */}
       <div
         style={{
           padding: 10,
@@ -218,7 +224,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
           borderTop: '1px solid #ccc',
           gap: 8,
           backgroundColor: '#fff',
-          boxSizing: 'border-box',
           flexShrink: 0,
         }}
       >
@@ -252,7 +257,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       </div>
     </div>
   );
-
 };
 
 export default JanelaChat;
