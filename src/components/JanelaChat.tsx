@@ -103,15 +103,15 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
     return (
       <div
         style={{
-          width: '350px',
-          height: '500px',
+          width: '100%',
+          height: '100%',
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           backgroundColor: '#fff',
           padding: 16,
           boxSizing: 'border-box',
-          border: '1px solid #ccc',
+          border: 'none', // opcional: remove a borda
         }}
       >
         <FormularioLead
@@ -124,6 +124,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       </div>
     );
   }
+
 
   return (
     <div
