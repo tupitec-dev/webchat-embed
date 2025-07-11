@@ -9,28 +9,13 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
   const [telefone, setTelefone] = useState('');
   const [erro, setErro] = useState('');
 
-  const aplicarMascaraTelefone = (valor: string) => {
-    const numeros = valor.replace(/\D/g, '').slice(0, 11);
-    if (numeros.length <= 10) {
-      return numeros.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').trim();
-    } else {
-      return numeros.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').trim();
-    }
-  };
-
-  const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valor = e.target.value;
-    setTelefone(aplicarMascaraTelefone(valor));
-  };
-
   const validar = () => {
-    const numeros = telefone.replace(/\D/g, '');
-    if (!nome.trim() || !numeros) {
+    if (!nome.trim() || !telefone.trim()) {
       setErro('Por favor, preencha todos os campos.');
       return false;
     }
-    if (numeros.length < 10 || numeros.length > 11) {
-      setErro('Digite um telefone válido com DDD.');
+    if (!/\d{8,}/.test(telefone)) {
+      setErro('Digite um telefone válido.');
       return false;
     }
     return true;
@@ -40,8 +25,7 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
     e.preventDefault();
     if (validar()) {
       setErro('');
-      const telefoneLimpo = telefone.replace(/\D/g, '');
-      onSubmit(nome.trim(), telefoneLimpo);
+      onSubmit(nome.trim(), telefone.trim());
     }
   };
 
@@ -75,8 +59,7 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
           type="tel"
           placeholder="Telefone ou WhatsApp"
           value={telefone}
-          onChange={handleTelefoneChange}
-          maxLength={15}
+          onChange={(e) => setTelefone(e.target.value)}
           style={{
             padding: '10px',
             fontSize: '16px',
