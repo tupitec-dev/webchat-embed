@@ -18,13 +18,20 @@ interface Mensagem {
 const TEMPO_INATIVIDADE_MS = 5 * 60 * 1000;
 
 function formatarMensagem(texto: string): string {
+  // se já houver tag <a>, não faz mais nada
+  if (/<a\s+href=/.test(texto)) return texto;
+
+  // converte links estilo Markdown para HTML
   const markdownLinks = texto.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+
+  // converte URLs diretas em links clicáveis
   const comLinks = markdownLinks.replace(/(https?:\/\/[^\s]+)/g, (url) => {
-    if (url.includes('href=')) return url;
     return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
   });
+
   return comLinks;
 }
+
 
 const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
