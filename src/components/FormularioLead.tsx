@@ -42,8 +42,12 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
       setErro('');
       const telefoneLimpo = telefone.replace(/\D/g, '');
       onSubmit(nome.trim(), telefoneLimpo);
+
+      // 🔔 Dispara evento global com o telefone
+      window.postMessage({ tipo: 'lead_preenchido', telefone: telefoneLimpo }, '*');
     }
   };
+
 
   return (
     <div
