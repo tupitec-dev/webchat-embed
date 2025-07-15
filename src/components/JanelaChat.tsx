@@ -218,7 +218,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
           onClick={onFechar}
           style={{
             background: 'transparent',
-            display: 'none',
+            //display: 'none',
             border: 'none',
             color: '#fff',
             fontSize: '18px',
