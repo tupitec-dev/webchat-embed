@@ -77,6 +77,16 @@
 
   document.body.appendChild(iframeChat);
 
+
+  // Escuta mensagens vindas do iframe (ex: fechar chat)
+  window.addEventListener('message', (event) => {
+    if (event?.data?.action === 'fechar-chat') {
+      iframeChat.style.display = 'none';
+    }
+  });
+
+
+
   botaoChat.addEventListener('click', () => {
     const visivel = iframeChat.style.display === 'block';
     iframeChat.style.display = visivel ? 'none' : 'block';

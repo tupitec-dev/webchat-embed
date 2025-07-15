@@ -215,10 +215,12 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       >
         <strong>{atendente?.nome || 'Atendente'}</strong>
         <button
-          onClick={onFechar}
+          onClick={() => {
+            if (onFechar) onFechar();
+            window.parent.postMessage({ action: 'fechar-chat' }, '*');
+          }}
           style={{
             background: 'transparent',
-            //display: 'none',
             border: 'none',
             color: '#fff',
             fontSize: '18px',
@@ -228,6 +230,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
         >
           ✖
         </button>
+
       </div>
 
       {/* Mensagens */}
