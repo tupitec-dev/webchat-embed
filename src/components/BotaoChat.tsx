@@ -37,17 +37,11 @@ const BotaoChat: React.FC<BotaoChatProps> = ({ onClick }) => {
       aria-label="Abrir chat"
     >
       {isUrl ? (
-      <img
-        src={icone}
-        alt="Abrir chat"
-        style={{
-          width: '64px',
-          height: '64px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)', // ⬅️ sombra sutil
-          borderRadius: '50%',                         // ⬅️ ajuda se imagem tiver fundo transparente
-        }}
-      />
-
+        <img
+          src={icone}
+          alt="Abrir chat"
+          style={{ width: '64px', height: '64px' }}
+        />
       ) : (
         <svg
           viewBox="0 0 64 64"
