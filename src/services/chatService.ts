@@ -13,7 +13,7 @@ export async function enviarMensagemParaIA({
   promptSistema: string;
   mensagens: { role: 'user' | 'assistant' | 'system'; content: string }[];
 }): Promise<string> {
-  const inicio = Date.now();
+  //const inicio = Date.now();
 
   try {
     const chat = await openai.chat.completions.create({
@@ -26,7 +26,7 @@ export async function enviarMensagemParaIA({
     });
 
     const resposta = chat.choices[0]?.message?.content || '';
-    console.log(`🧠 Resposta da IA recebida em ${Date.now() - inicio}ms`);
+    //console.log(`🧠 Resposta da IA recebida em ${Date.now() - inicio}ms`);
     return resposta;
   } catch (erro) {
     console.error('❌ Erro ao conversar com a IA:', erro);
