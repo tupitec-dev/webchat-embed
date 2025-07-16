@@ -42,7 +42,7 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
     const dominio = params.get('dominio') || window.location.hostname;
 
     if (dominio) {
-      console.log('🌐 Buscando empresa pelo domínio:', dominio);
+      //console.log('🌐 Buscando empresa pelo domínio:', dominio);
       carregarDados(dominio);
     } else {
       console.error('❌ Domínio não encontrado na URL.');
@@ -72,7 +72,7 @@ export const EmpresaProvider = ({ children }: { children: React.ReactNode }) => 
 
       const empresaData = empresas[0];
       setEmpresa(empresaData);
-      console.log('✅ Empresa encontrada:', empresaData);
+      //console.log('✅ Empresa encontrada:', empresaData);
 
       const empresaId = empresaData.id;
 
