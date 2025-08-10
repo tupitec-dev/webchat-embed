@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useEmpresa } from '../context/EmpresaContext';
 import { gerarPromptPersonalizado } from '../utils/gerarPrompt';
 import { enviarMensagemParaIA } from '../services/chatService';
@@ -31,6 +31,29 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { empresa, atendente, informacoes } = useEmpresa();
+
+  // ===== THEME: lê params da URL e aplica como CSS vars no container =====
+  const themeVars = useMemo(() => {
+    const p = new URLSearchParams(window.location.search);
+    const v: Record<string, string> = {};
+    const map: Record<string, string> = {
+      brand: '--chat-brand',
+      brandDark: '--chat-brand-dark',
+      onBrand: '--chat-on-brand',
+      surface: '--chat-surface',
+      surface2: '--chat-surface-2',
+      border: '--chat-border',
+      muted: '--chat-muted',
+      text: '--chat-text',
+      focusRing: '--chat-focus-ring',
+    };
+    Object.entries(map).forEach(([q, cssVar]) => {
+      const val = p.get(q);
+      if (val) v[cssVar] = val;
+    });
+    return v as React.CSSProperties;
+  }, []);
+  // =====================================================================
 
   useEffect(() => {
     mensagensRef.current?.scrollTo(0, mensagensRef.current.scrollHeight);
@@ -85,6 +108,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
       .filter(m => m.autor === 'cliente')
       .map(m => m.texto)
       .join('\n');
+
     const prompt = `Resuma de forma clara e objetiva a seguinte conversa de um cliente:\n\n${mensagensCliente}`;
     try {
       return await enviarMensagemParaIA({ promptSistema: prompt, mensagens: [] });
@@ -107,8 +131,8 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
     iniciarTimeoutInatividade();
 
     try {
-      if (!empresa || !atendente) throw new Error("Dados da empresa ou atendente não carregados.");
-      
+      if (!empresa || !atendente) throw new Error('Dados da empresa ou atendente não carregados.');
+
       const pediuAtendente = detectarPedidoDeAtendente(novaMensagem.texto);
       if (pediuAtendente) {
         const resumo = await gerarResumoDaConversa();
@@ -121,7 +145,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
         setMensagens(m => [...m, resposta]);
         return;
       }
-      
+
       const prompt = gerarPromptPersonalizado({ empresa, informacoes, atendente });
       const respostaTexto = await enviarMensagemParaIA({
         promptSistema: prompt,
@@ -133,7 +157,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
         hora: new Date().toISOString(),
       };
       setMensagens(m => [...m, respostaMensagem]);
-
     } catch (err) {
       console.error('Erro na IA:', err);
       const erroMensagem: Mensagem = {
@@ -165,7 +188,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
   }
 
   return (
-    <div className={styles.janelaChat}>
+    <div className={styles.janelaChat} style={themeVars}>
       <header className={styles.header}>
         <strong className={styles.headerTitle}>{atendente?.nome || 'Atendente'}</strong>
 
@@ -182,7 +205,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
             height="24"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor" // herda a cor definida no CSS (.closeButton)
+            stroke="currentColor" /* herda cor do .closeButton */
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -239,7 +262,7 @@ const SendIcon = () => (
     height="24"
     viewBox="0 0 24 24"
     fill="none"
-    stroke="currentColor" // herda cor do .sendButton
+    stroke="currentColor" /* herda cor do .sendButton */
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
