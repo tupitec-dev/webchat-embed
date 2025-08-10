@@ -21,10 +21,15 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  border-radius: 12px;
-  
-  
+
+  /* Ajustes para ocupar toda a janela */
+  width: 100%;
+  height: 100%;
+  border: none;         /* remove contorno */
+  border-radius: 0;     /* remove cantos arredondados */
+  box-shadow: none;     /* remove sombra */
 }
+
 
 /* Mobile: cantos mais arredondados para combinar com a janela */
 @media (max-width: 600px) {
