@@ -85,7 +85,7 @@
     @media (max-width: 600px) {
       #tupitec-webchat-iframe {
         position: fixed;
-        top: 80px;               /* deixa espaço para o cabeçalho fixo */
+        top: 90px;               /* deixa espaço para o cabeçalho fixo */
         left: 0;
         right: 0;
         bottom: 0;
