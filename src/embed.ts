@@ -84,7 +84,7 @@
     @media (max-width: 600px) {
       #tupitec-webchat-iframe {
         position: fixed;
-        top: 0;               /* REMOVIDO o top: 80px */
+        top: 80;               /* REMOVIDO o top: 80px */
         left: 0;
         right: 0;
         bottom: 0;
