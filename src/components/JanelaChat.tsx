@@ -141,16 +141,18 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => { // onFechar se
   };
 
   if (!leadPreenchido) {
-    return (
-      <FormularioLead
-        onSubmit={(nome, tel) => {
-          setClienteNome(nome);
-          setContato(tel);
-          setLeadPreenchido(true);
-        }}
-      />
-    );
-  }
+      return (
+        <FormularioLead
+          onSubmit={(nome, tel) => {
+            setClienteNome(nome);
+            setContato(tel);
+            setLeadPreenchido(true);
+          }}
+          // Conecta a função de fechar o chat
+          onClose={() => window.parent.postMessage({ action: 'fechar-chat' }, '*')}
+        />
+      );
+    }
 
   return (
     <div className={styles.janelaChat}>

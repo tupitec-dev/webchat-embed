@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
-// Importe o CSS Module
 import styles from './FormularioLead.module.css';
 
 type FormularioLeadProps = {
   onSubmit: (nome: string, telefone: string) => void;
+  onClose: () => void; // NOVO: Propriedade para a função de fechar
 };
 
-const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
+const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit, onClose }) => {
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [erro, setErro] = useState('');
 
-  // A lógica da máscara, validação e submit permanece a mesma...
+  // ... (toda a sua lógica de máscara e validação continua a mesma)
   const aplicarMascaraTelefone = (valor: string) => {
     const numeros = valor.replace(/\D/g, '').slice(0, 11);
     if (numeros.length === 0) return '';
@@ -24,11 +24,9 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
     }
     return mascara;
   };
-
   const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTelefone(aplicarMascaraTelefone(e.target.value));
   };
-
   const validar = () => {
     const numeros = telefone.replace(/\D/g, '');
     if (!nome.trim() || !numeros) {
@@ -42,7 +40,6 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
     setErro('');
     return true;
   };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validar()) {
@@ -50,9 +47,14 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
     }
   };
 
+
   return (
-    // Aplica as classes de estilo ao JSX
     <div className={styles.formContainer}>
+      {/* NOVO: Botão de fechar */}
+      <button onClick={onClose} className={styles.closeButton} aria-label="Fechar chat">
+        ✖
+      </button>
+
       <h3 className={styles.title}>Antes de começar:</h3>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

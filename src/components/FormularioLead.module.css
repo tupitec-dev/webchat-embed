@@ -60,3 +60,36 @@
   background-color: #0069d9;
   transform: translateY(-2px); /* Efeito de elevação sutil */
 }
+
+
+/* Em FormularioLead.module.css */
+
+/* Adicione esta propriedade ao container principal */
+.formContainer {
+  position: relative;
+  padding: 24px;
+  background-color: #ffffff;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Adicione esta nova classe para o botão de fechar */
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #a0aec0; /* cinza sutil */
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.closeButton:hover {
+  color: #718096; /* cinza mais escuro no hover */
+}
