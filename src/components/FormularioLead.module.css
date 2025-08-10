@@ -4,21 +4,11 @@
 .formContainer {
   padding: 24px;
   background-color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif; /* Use uma fonte moderna */
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  border-radius: 12px; /* cantos arredondados */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); /* sombra suave */
+  gap: 18px; /* Espaçamento entre os elementos */
 }
-
-/* No mobile, arredonda igual à janela do chat */
-@media (max-width: 600px) {
-  .formContainer {
-    border-radius: 16px; /* ou 16px 16px 0 0 se quiser só no topo */
-  }
-}
-
 
 /* Título */
 .title {

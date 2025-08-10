@@ -23,13 +23,12 @@
     right: 0;
     bottom: 0;
     width: 100vw;
-    height: 100vh;
-    border-radius: 16px; /* cantos arredondados */
+    height: 100vh; /* ocupa todo o viewport */
+    border-radius: 0;
     border: none;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    box-shadow: none;
   }
 }
-
 
 /* -- Cabeçalho -- */
 .header {
