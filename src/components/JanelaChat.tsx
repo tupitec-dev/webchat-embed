@@ -158,16 +158,29 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => { // onFechar se
     <div className={styles.janelaChat}>
       <header className={styles.header}>
         <strong className={styles.headerTitle}>{atendente?.nome || 'Atendente'}</strong>
+
         <button
           onClick={() => {
-            // CORREÇÃO: Chamando a função onFechar para que ela seja utilizada.
-            onFechar?.(); 
+            onFechar?.();
             window.parent.postMessage({ action: 'fechar-chat' }, '*');
           }}
           className={styles.closeButton}
           aria-label="Fechar chat"
         >
-          ✖
+          {/* O '✖' foi substituído por um ícone SVG com cor definida diretamente */}
+          <svg 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="white" /* <-- A cor é definida aqui e é mais confiável */
+            strokeWidth="2.5" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
       </header>
 
