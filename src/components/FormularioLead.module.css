@@ -1,0 +1,62 @@
+/* FormularioLead.module.css */
+
+/* Estilo geral do container */
+.formContainer {
+  padding: 24px;
+  background-color: #ffffff;
+  font-family: 'Inter', sans-serif; /* Use uma fonte moderna */
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* Espaçamento entre os elementos */
+}
+
+/* Título */
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+  text-align: center;
+}
+
+/* Inputs de texto */
+.input {
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px; /* Cantos mais arredondados */
+  border: 1px solid #ced4da;
+  transition: border-color 0.2s, box-shadow 0.2s; /* Transição suave */
+}
+
+/* Efeito de foco nos inputs */
+.input:focus {
+  outline: none;
+  border-color: #007bff; /* Usa a cor principal */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15); /* Sombra de foco */
+}
+
+/* Mensagem de erro */
+.error {
+  color: #e53e3e; /* Vermelho para erros */
+  font-size: 14px;
+}
+
+/* Botão principal */
+.submitButton {
+  background-color: #007bff;
+  color: #fff;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+}
+
+/* Efeito hover no botão */
+.submitButton:hover {
+  background-color: #0069d9;
+  transform: translateY(-2px); /* Efeito de elevação sutil */
+}

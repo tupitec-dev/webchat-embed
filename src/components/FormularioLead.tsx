@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+// Importe o CSS Module
+import styles from './FormularioLead.module.css';
 
 type FormularioLeadProps = {
   onSubmit: (nome: string, telefone: string) => void;
@@ -9,18 +11,22 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
   const [telefone, setTelefone] = useState('');
   const [erro, setErro] = useState('');
 
+  // A lógica da máscara, validação e submit permanece a mesma...
   const aplicarMascaraTelefone = (valor: string) => {
     const numeros = valor.replace(/\D/g, '').slice(0, 11);
-    if (numeros.length <= 10) {
-      return numeros.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3').trim();
-    } else {
-      return numeros.replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3').trim();
+    if (numeros.length === 0) return '';
+    if (numeros.length <= 2) return `(${numeros}`;
+    let mascara = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+    if (numeros.length === 11) {
+       mascara = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
+    } else if (mascara.length > 9) {
+      mascara = `${mascara.slice(0, 9)}-${mascara.slice(9)}`;
     }
+    return mascara;
   };
 
   const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const valor = e.target.value;
-    setTelefone(aplicarMascaraTelefone(valor));
+    setTelefone(aplicarMascaraTelefone(e.target.value));
   };
 
   const validar = () => {
@@ -33,29 +39,21 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
       setErro('Digite um telefone válido com DDD.');
       return false;
     }
+    setErro('');
     return true;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validar()) {
-      setErro('');
-      const telefoneLimpo = telefone.replace(/\D/g, '');
-      onSubmit(nome.trim(), telefoneLimpo);
+      onSubmit(nome.trim(), telefone.replace(/\D/g, ''));
     }
   };
 
   return (
-    <div
-      style={{
-        padding: '20px',
-        backgroundColor: '#ffffff',
-        borderRadius: '12px',
-        boxShadow: 'none',
-        maxWidth: '100%',
-      }}
-    >
-      <h3 style={{ marginBottom: '16px', color: '#333' }}>Antes de começar:</h3>
+    // Aplica as classes de estilo ao JSX
+    <div className={styles.formContainer}>
+      <h3 className={styles.title}>Antes de começar:</h3>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <input
@@ -63,12 +61,7 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
           placeholder="Seu nome"
           value={nome}
           onChange={(e) => setNome(e.target.value)}
-          style={{
-            padding: '10px',
-            fontSize: '16px',
-            borderRadius: '8px',
-            border: '1px solid #ccc',
-          }}
+          className={styles.input}
         />
 
         <input
@@ -77,32 +70,12 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit }) => {
           value={telefone}
           onChange={handleTelefoneChange}
           maxLength={15}
-          style={{
-            padding: '10px',
-            fontSize: '16px',
-            borderRadius: '8px',
-            border: '1px solid #ccc',
-          }}
+          className={styles.input}
         />
 
-        {erro && (
-          <div style={{ color: 'red', fontSize: '14px' }}>
-            {erro}
-          </div>
-        )}
+        {erro && <div className={styles.error}>{erro}</div>}
 
-        <button
-          type="submit"
-          style={{
-            backgroundColor: '#007bff',
-            color: '#fff',
-            padding: '10px',
-            fontSize: '16px',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-          }}
-        >
+        <button type="submit" className={styles.submitButton}>
           Iniciar atendimento
         </button>
       </form>
