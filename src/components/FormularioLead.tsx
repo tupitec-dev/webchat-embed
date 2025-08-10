@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import styles from './FormularioLead.module.css';
 
 type FormularioLeadProps = {
   onSubmit: (nome: string, telefone: string) => void;
-  onClose: () => void; // NOVO: Propriedade para a função de fechar
+  onClose: () => void;
 };
 
 const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit, onClose }) => {
@@ -11,22 +11,46 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit, onClose }) =>
   const [telefone, setTelefone] = useState('');
   const [erro, setErro] = useState('');
 
-  // ... (toda a sua lógica de máscara e validação continua a mesma)
+  // ===== THEME: lê params da URL e aplica como CSS vars =====
+  const themeVars = useMemo(() => {
+    const p = new URLSearchParams(window.location.search);
+    const v: Record<string, string> = {};
+    const map: Record<string, string> = {
+      brand: '--chat-brand',
+      brandDark: '--chat-brand-dark',
+      onBrand: '--chat-on-brand',
+      surface: '--chat-surface',
+      surface2: '--chat-surface-2',
+      border: '--chat-border',
+      muted: '--chat-muted',
+      text: '--chat-text',
+      focusRing: '--chat-focus-ring',
+    };
+    Object.entries(map).forEach(([q, cssVar]) => {
+      const val = p.get(q);
+      if (val) v[cssVar] = val;
+    });
+    return v as React.CSSProperties;
+  }, []);
+  // =========================================================
+
   const aplicarMascaraTelefone = (valor: string) => {
     const numeros = valor.replace(/\D/g, '').slice(0, 11);
     if (numeros.length === 0) return '';
     if (numeros.length <= 2) return `(${numeros}`;
     let mascara = `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
     if (numeros.length === 11) {
-       mascara = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
+      mascara = `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7)}`;
     } else if (mascara.length > 9) {
       mascara = `${mascara.slice(0, 9)}-${mascara.slice(9)}`;
     }
     return mascara;
   };
+
   const handleTelefoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTelefone(aplicarMascaraTelefone(e.target.value));
   };
+
   const validar = () => {
     const numeros = telefone.replace(/\D/g, '');
     if (!nome.trim() || !numeros) {
@@ -40,6 +64,7 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit, onClose }) =>
     setErro('');
     return true;
   };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validar()) {
@@ -47,10 +72,8 @@ const FormularioLead: React.FC<FormularioLeadProps> = ({ onSubmit, onClose }) =>
     }
   };
 
-
   return (
-    <div className={styles.formContainer}>
-      {/* NOVO: Botão de fechar */}
+    <div className={styles.formContainer} style={themeVars}>
       <button onClick={onClose} className={styles.closeButton} aria-label="Fechar chat">
         ✖
       </button>
