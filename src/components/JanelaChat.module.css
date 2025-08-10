@@ -18,10 +18,8 @@
   height: 600px;
   background-color: var(--chat-surface);
   border: 1px solid var(--chat-border);
-  border-radius: 12px;
-  box-shadow:
-    0 10px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-radius: inherit;         /* herda do iframe */
+  box-shadow: none;               /* evita sombra dupla (fica no iframe) */
   font-family: 'Inter', sans-serif;
   overflow: hidden;
   display: flex;
@@ -41,10 +39,10 @@
     right: 0;
     bottom: 0;
     width: 100vw;
-    height: 100vh;            /* ocupa todo o viewport */
-    border-radius: 16px;       /* cantos arredondados no mobile */
+    height: 100vh;                /* ocupa todo o viewport */
+    border-radius: inherit;       /* continua herdando do iframe */
     border: none;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    box-shadow: none;             /* sombra só no iframe */
   }
 }
 

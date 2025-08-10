@@ -63,6 +63,7 @@
   document.body.appendChild(botaoChat);
 
   // 3) CSS do iframe (corrige mobile: sem offset de 80px)
+  // 3) CSS do iframe
   const styleElement = document.createElement('style');
   styleElement.textContent = `
     #tupitec-webchat-iframe {
@@ -84,18 +85,19 @@
     @media (max-width: 600px) {
       #tupitec-webchat-iframe {
         position: fixed;
-        top: 80;               /* REMOVIDO o top: 80px */
+        top: 80px;               /* deixa espaço para o cabeçalho fixo */
         left: 0;
         right: 0;
         bottom: 0;
         width: 100vw;
-        height: 100dvh;       /* ocupa viewport visível real */
-        border-radius: 16px;  /* cantos arredondados no mobile */
+        height: calc(100dvh - 80px); /* ocupa o restante da tela */
+        border-radius: 16px;     /* cantos arredondados no mobile */
         box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       }
     }
   `;
   document.head.appendChild(styleElement);
+
 
   // 4) Iframe + querystring com tema
   const params = new URLSearchParams({
