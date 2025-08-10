@@ -7,7 +7,8 @@
   background-color: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+              0 10px 10px -5px rgba(0, 0, 0, 0.04);
   font-family: 'Inter', sans-serif;
   overflow: hidden;
   display: flex;
@@ -18,18 +19,17 @@
 /* -- Layout para Mobile -- */
 @media (max-width: 600px) {
   .janelaChat {
-    top: 80px;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100vw;
-    /* CORREÇÃO: Altura correta para descontar o espaço do topo */
-    height: calc(100vh - 0px);
-    border-radius: 0;
+    height: 100vh;
+    border-radius: 16px; /* cantos arredondados */
     border: none;
-    box-shadow: none;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
   }
 }
+
 
 /* -- Cabeçalho -- */
 .header {
@@ -58,10 +58,7 @@
   opacity: 0.8;
   transition: opacity 0.2s;
 }
-
-.closeButton:hover {
-  opacity: 1;
-}
+.closeButton:hover { opacity: 1; }
 
 /* -- Container das Mensagens -- */
 .messagesContainer {
@@ -71,18 +68,12 @@
   padding: 16px;
   background-color: #f8f9fa;
 }
-
-/* Estilização da barra de rolagem */
-.messagesContainer::-webkit-scrollbar {
-  width: 6px;
-}
+.messagesContainer::-webkit-scrollbar { width: 6px; }
 .messagesContainer::-webkit-scrollbar-thumb {
   background: #cbd5e0;
   border-radius: 3px;
 }
-.messagesContainer::-webkit-scrollbar-thumb:hover {
-  background: #a0aec0;
-}
+.messagesContainer::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
 
 /* -- Linha e Balão de Mensagem -- */
 .messageRow {
@@ -90,31 +81,25 @@
   margin-bottom: 12px;
   justify-content: flex-start;
 }
+.messageRowCliente { justify-content: flex-end; }
 
-.messageRowCliente {
-  justify-content: flex-end;
-}
-
-/* CORREÇÃO: Removida a duplicação da classe .messageBubble */
 .messageBubble {
-  display: inline-block; /* Propriedade importante que estava faltando em uma das versões */
+  display: inline-block;
   padding: 10px 14px;
   border-radius: 18px;
   max-width: 80%;
   word-break: break-word;
   white-space: pre-wrap;
   line-height: 1.5;
-  background-color: #e9ecef; /* Cor padrão (IA) */
+  background-color: #e9ecef;
   color: #212529;
   border-bottom-left-radius: 4px;
 }
-
 .messageBubbleCliente {
   background-color: #007bff;
   color: #fff;
   border-bottom-right-radius: 4px;
 }
-
 .typingIndicator .messageBubble {
   font-style: italic;
   color: #6c757d;
@@ -133,21 +118,19 @@
 
 .textInput {
   flex: 1;
-  height: 44px; /* Altura igual ao botão */
+  height: 44px;
   padding: 0 16px;
   font-size: 16px;
   border: 1px solid #ced4da;
-  border-radius: 22px; /* Metade da altura para ser totalmente redondo */
+  border-radius: 22px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-
 .textInput:focus {
   outline: none;
   border-color: #007bff;
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
-/* CORREÇÃO: Removida a duplicação da classe .sendButton */
 .sendButton {
   background-color: #007bff;
   border: none;
@@ -158,17 +141,11 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  flex-shrink: 0; /* Impede que o botão encolha */
+  flex-shrink: 0;
   transition: background-color 0.2s, transform 0.2s;
 }
-
-.sendButton:hover {
-  background-color: #0056b3;
-}
-
+.sendButton:hover { background-color: #0056b3; }
 .sendButton:disabled {
   background-color: #a0aec0;
   cursor: not-allowed;
 }
-
-/* CORREÇÃO: A chave '}' extra que estava aqui foi removida. */
