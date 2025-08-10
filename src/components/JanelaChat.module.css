@@ -8,23 +8,24 @@
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+
+  /* CHAVE DO LAYOUT: Define o container como uma coluna flexível */
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', sans-serif; /* Fonte mais moderna */
-  overflow: hidden; /* Garante que o conteúdo respeite o border-radius */
 }
 
 /* -- Layout para Mobile -- */
 @media (max-width: 600px) {
   .janelaChat {
-    /* Ocupa a tela inteira, deixando 80px livres no topo */
     top: 80px;
     left: 0;
     right: 0;
     bottom: 0;
     width: 100vw;
-    height: calc(100vh - 80px);
-    border-radius: 0; /* Remove as bordas arredondadas em tela cheia */
+    height: calc(100vh - 0px);
+    border-radius: 0;
     border: none;
     box-shadow: none;
   }
@@ -32,12 +33,13 @@
 
 /* -- Cabeçalho -- */
 .header {
-  background: linear-gradient(90deg, #007bff, #0056b3); /* Gradiente sutil */
+  background: linear-gradient(90deg, #007bff, #0056b3);
   color: #fff;
   padding: 12px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* CHAVE DO LAYOUT: Impede que o cabeçalho encolha */
   flex-shrink: 0;
 }
 
@@ -63,14 +65,22 @@
 }
 
 /* -- Container das Mensagens -- */
+/* Dentro de JanelaChat.module.css */
+
+/* -- Container das Mensagens -- */
 .messagesContainer {
+  /* A linha que faz ele crescer */
   flex: 1;
+
+  /* A CORREÇÃO FINAL: Força o flex: 1 a funcionar corretamente */
+  min-height: 0;
+  
   overflow-y: auto;
   padding: 16px;
-  background-color: #f8f9fa; /* Fundo um pouco mais suave */
+  background-color: #f8f9fa;
 }
 
-/* Estilização da barra de rolagem (opcional, mas melhora o design) */
+/* Estilização da barra de rolagem */
 .messagesContainer::-webkit-scrollbar {
   width: 6px;
 }
@@ -86,67 +96,78 @@
 .messageRow {
   display: flex;
   margin-bottom: 12px;
-  justify-content: flex-start; /* Padrão para IA */
+  justify-content: flex-start;
 }
 
 .messageRowCliente {
-  justify-content: flex-end; /* Alinha à direita para o cliente */
+  justify-content: flex-end;
 }
+
+/* Em JanelaChat.module.css */
 
 .messageBubble {
   padding: 10px 14px;
   border-radius: 18px;
   max-width: 80%;
   word-break: break-word;
-  white-space: pre-wrap; /* Mantém as quebras de linha do texto */
+  white-space: pre-wrap;
   line-height: 1.5;
-}
-
-/* Mensagem da IA */
-.messageBubble {
   background-color: #e9ecef;
   color: #212529;
   border-bottom-left-radius: 4px;
 }
 
-/* Mensagem do Cliente */
 .messageBubbleCliente {
   background-color: #007bff;
   color: #fff;
   border-bottom-right-radius: 4px;
 }
 
-/* Indicador "Digitando..." */
 .typingIndicator .messageBubble {
   font-style: italic;
   color: #6c757d;
 }
 
 /* -- Rodapé com Input e Botão -- */
+/* evita que padding/borda somem na altura */
+/* evita somar padding/borda na altura */
+.janelaChat * { box-sizing: border-box; }
+
+/* Rodapé colado no fundo, sem espaço extra */
 .footer {
-  padding: 12px;
+  padding: 0 12px;         /* zero em cima e embaixo */
+  height: 56px;            /* altura fixa do rodapé */
   display: flex;
-  align-items: center;
+  align-items: center;     /* centraliza input/botão verticalmente */
   gap: 10px;
   border-top: 1px solid #e2e8f0;
   background-color: #fff;
   flex-shrink: 0;
 }
 
+/* Input e botão com a MESMA altura, sem margem extra */
 .textInput {
   flex: 1;
-  padding: 10px;
+  height: 40px;            /* mesma base do botão */
+  line-height: 40px;       /* centraliza o texto */
+  padding: 0 14px;         /* sem padding vertical */
+  margin: 0;               /* garante nenhum espaçamento extra */
   font-size: 16px;
   border: 1px solid #ced4da;
-  border-radius: 20px; /* Input arredondado */
+  border-radius: 20px;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.textInput:focus {
-  outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+.sendButton {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }
+
+
 
 .sendButton {
   background-color: #007bff;
