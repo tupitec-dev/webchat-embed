@@ -1,23 +1,38 @@
 (() => {
-  // 1. LÊ AS CONFIGURAÇÕES DA TAG <script>
+  // 1) Lê configurações da <script> (inclui novas cores opcionais)
   const scriptTag = document.currentScript as HTMLScriptElement;
+  const get = (name: string, fallback = '') =>
+    scriptTag?.getAttribute(name) || fallback;
+
   const config = {
-    cor: scriptTag?.getAttribute('data-cor') || '#007bff',
-    posicao: scriptTag?.getAttribute('data-posicao') || 'bottom-right',
-    icone: scriptTag?.getAttribute('data-icone') || '',
-    dominio: scriptTag?.getAttribute('data-dominio') || window.location.hostname,
-    empresaId: scriptTag?.getAttribute('data-empresaid') || '',
+    cor:        get('data-cor', '#007bff'),
+    posicao:    get('data-posicao', 'bottom-right'),
+    icone:      get('data-icone', ''),
+    dominio:    get('data-dominio', window.location.hostname),
+    empresaId:  get('data-empresaid', ''),
+
+    // NOVOS (todos opcionais)
+    corEscura:  get('data-cor-escura', ''),         // ex: #0056b3
+    onBrand:    get('data-on-brand', ''),           // ex: #ffffff
+    surface:    get('data-surface', ''),            // ex: #ffffff
+    surface2:   get('data-surface2', ''),           // ex: #f8f9fa
+    border:     get('data-border', ''),             // ex: #e2e8f0
+    muted:      get('data-muted', ''),              // ex: #cbd5e0
+    text:       get('data-text', ''),               // ex: #212529
+    focusRing:  get('data-focus-ring', ''),         // ex: rgba(0,123,255,.15)
   };
 
-  // 2. CRIA O BOTÃO FLUTUANTE
+  // 2) Botão flutuante
   const botaoChat = document.createElement('button');
   botaoChat.setAttribute('aria-label', 'Abrir chat');
+
   const posicoes: Record<string, Partial<CSSStyleDeclaration>> = {
     'bottom-right': { bottom: '20px', right: '20px' },
-    'bottom-left': { bottom: '20px', left: '20px' },
-    'top-right': { top: '20px', right: '20px' },
-    'top-left': { top: '20px', left: '20px' },
+    'bottom-left':  { bottom: '20px', left: '20px' },
+    'top-right':    { top: '20px', right: '20px' },
+    'top-left':     { top: '20px', left: '20px' },
   };
+
   Object.assign(botaoChat.style, {
     position: 'fixed',
     background: 'transparent',
@@ -35,6 +50,7 @@
     img.alt = 'Abrir chat';
     img.style.width = '64px';
     img.style.height = '64px';
+    img.style.filter = 'drop-shadow(0 6px 16px rgba(0,0,0,.25))';
     botaoChat.appendChild(img);
   } else {
     botaoChat.innerHTML = `
@@ -46,11 +62,10 @@
   }
   document.body.appendChild(botaoChat);
 
-  // 3. CRIA E INJETA O CSS PARA O IFRAME
+  // 3) CSS do iframe (corrige mobile: sem offset de 80px)
   const styleElement = document.createElement('style');
-  const cssStyles = `
+  styleElement.textContent = `
     #tupitec-webchat-iframe {
-      /* Estilos Padrão (Desktop) */
       position: fixed;
       z-index: 10000;
       border: none;
@@ -60,49 +75,60 @@
       height: 600px;
       ${config.posicao.includes('bottom') ? `bottom: 90px;` : `top: 90px;`}
       ${config.posicao.includes('right') ? `right: 20px;` : `left: 20px;`}
-      display: none; /* Começa escondido */
+      display: none;
       overflow: hidden;
       transition: width 0.3s, height 0.3s;
+      background: transparent;
     }
 
-    /* Estilos para Mobile */
     @media (max-width: 600px) {
       #tupitec-webchat-iframe {
-        top: 80px;
+        position: fixed;
+        top: 0;               /* REMOVIDO o top: 80px */
         left: 0;
         right: 0;
         bottom: 0;
-        width: 100%;
-        height: calc(100% - 80px);
-        border-radius: 0;
-        box-shadow: none;
-        ${config.posicao.includes('bottom') ? `bottom: 0;` : ``}
-        ${config.posicao.includes('right') ? `right: 0;` : ``}
+        width: 100vw;
+        height: 100dvh;       /* ocupa viewport visível real */
+        border-radius: 16px;  /* cantos arredondados no mobile */
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       }
     }
   `;
-  styleElement.textContent = cssStyles;
   document.head.appendChild(styleElement);
 
-  // 4. CRIA O IFRAME
+  // 4) Iframe + querystring com tema
+  const params = new URLSearchParams({
+    dominio:   config.dominio,
+    empresaId: config.empresaId,
+    // Tema (enviado só se existir)
+    ...(config.cor        ? { brand: config.cor } : {}),
+    ...(config.corEscura  ? { brandDark: config.corEscura } : {}),
+    ...(config.onBrand    ? { onBrand: config.onBrand } : {}),
+    ...(config.surface    ? { surface: config.surface } : {}),
+    ...(config.surface2   ? { surface2: config.surface2 } : {}),
+    ...(config.border     ? { border: config.border } : {}),
+    ...(config.muted      ? { muted: config.muted } : {}),
+    ...(config.text       ? { text: config.text } : {}),
+    ...(config.focusRing  ? { focusRing: config.focusRing } : {}),
+  });
+
   const iframeChat = document.createElement('iframe');
-  iframeChat.id = 'tupitec-webchat-iframe'; // Atribui o ID que o CSS usa
-  iframeChat.src = `https://webchat-embed.vercel.app/?dominio=${encodeURIComponent(config.dominio)}&empresaId=${encodeURIComponent(config.empresaId)}`;
+  iframeChat.id = 'tupitec-webchat-iframe';
   iframeChat.title = 'Chat de Atendimento';
+  iframeChat.src = `https://webchat-embed.vercel.app/?${params.toString()}`;
   document.body.appendChild(iframeChat);
 
-  // 5. ADICIONA OS EVENTOS
+  // 5) Eventos
   botaoChat.addEventListener('click', () => {
     const isVisible = iframeChat.style.display === 'block';
     iframeChat.style.display = isVisible ? 'none' : 'block';
   });
-  
+
   window.addEventListener('message', (event) => {
-    if (event.source !== iframeChat.contentWindow) return; // Verificação de segurança
-    
+    if (event.source !== iframeChat.contentWindow) return;
     if (event.data.action === 'fechar-chat') {
       iframeChat.style.display = 'none';
     }
   });
-
 })();

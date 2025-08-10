@@ -1,95 +1,109 @@
-/* FormularioLead.module.css */
+/* FormularioLead.module.css – atualizado e temável */
 
-/* Estilo geral do container */
+/* Variáveis (herdam do container do chat, com fallback) */
+:root {
+  --chat-brand: #007bff;
+  --chat-brand-dark: #0056b3;
+  --chat-on-brand: #ffffff;
+  --chat-surface: #ffffff;
+  --chat-border: #e2e8f0;
+  --chat-focus-ring: rgba(0, 123, 255, 0.15);
+  --chat-text: #2d3748;
+  --chat-error: #e53e3e;
+}
+
+/* Container */
 .formContainer {
+  position: relative;
   padding: 24px;
-  background-color: #ffffff;
-  font-family: 'Inter', sans-serif; /* Use uma fonte moderna */
+  background-color: var(--chat-surface);
+  font-family: 'Inter', sans-serif;
   display: flex;
   flex-direction: column;
-  gap: 18px; /* Espaçamento entre os elementos */
+  gap: 18px;
+  border-radius: 12px;
+  border: 1px solid var(--chat-border);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* Mobile: cantos mais arredondados para combinar com a janela */
+@media (max-width: 600px) {
+  .formContainer {
+    border-radius: 16px;
+  }
 }
 
 /* Título */
 .title {
   font-size: 20px;
   font-weight: 600;
-  color: #2d3748;
+  color: var(--chat-text);
   margin: 0;
   text-align: center;
 }
 
-/* Inputs de texto */
+/* Inputs */
 .input {
   padding: 12px;
   font-size: 16px;
-  border-radius: 8px; /* Cantos mais arredondados */
+  border-radius: 8px;
   border: 1px solid #ced4da;
-  transition: border-color 0.2s, box-shadow 0.2s; /* Transição suave */
+  transition: border-color .2s, box-shadow .2s;
+  background: #fff;
+  color: #111827;
 }
 
-/* Efeito de foco nos inputs */
 .input:focus {
   outline: none;
-  border-color: #007bff; /* Usa a cor principal */
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15); /* Sombra de foco */
+  border-color: var(--chat-brand);
+  box-shadow: 0 0 0 3px var(--chat-focus-ring);
 }
 
-/* Mensagem de erro */
+/* Erro */
 .error {
-  color: #e53e3e; /* Vermelho para erros */
+  color: var(--chat-error);
   font-size: 14px;
 }
 
 /* Botão principal */
 .submitButton {
-  background-color: #007bff;
-  color: #fff;
+  background-color: var(--chat-brand);
+  color: var(--chat-on-brand);
   padding: 12px;
   font-size: 16px;
   font-weight: 500;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
-  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+  transition: background-color .2s, transform .2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
 }
 
-/* Efeito hover no botão */
 .submitButton:hover {
-  background-color: #0069d9;
-  transform: translateY(-2px); /* Efeito de elevação sutil */
+  background-color: var(--chat-brand-dark);
+  transform: translateY(-2px);
 }
 
-
-/* Em FormularioLead.module.css */
-
-/* Adicione esta propriedade ao container principal */
-.formContainer {
-  position: relative;
-  padding: 24px;
-  background-color: #ffffff;
-  font-family: 'Inter', sans-serif;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+.submitButton:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+  transform: none;
 }
 
-/* Adicione esta nova classe para o botão de fechar */
+/* Botão fechar (X) */
 .closeButton {
   position: absolute;
   top: 10px;
   right: 10px;
   background: transparent;
   border: none;
-  font-size: 24px;
-  color: #a0aec0; /* cinza sutil */
+  font-size: 22px;
+  color: #a0aec0;
   cursor: pointer;
   padding: 5px;
   line-height: 1;
-  transition: color 0.2s;
+  transition: color .2s, transform .1s;
 }
 
-.closeButton:hover {
-  color: #718096; /* cinza mais escuro no hover */
-}
+.closeButton:hover { color: #718096; }
+.closeButton:active { transform: scale(0.96); }

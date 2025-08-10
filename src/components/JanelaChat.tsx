@@ -5,7 +5,6 @@ import { enviarMensagemParaIA } from '../services/chatService';
 import { salvarConversa } from '../services/conversaService';
 import FormularioLead from './FormularioLead';
 import styles from './JanelaChat.module.css';
-// CORREÇÃO: A linha de import do SendIcon foi removida, pois ele está definido neste mesmo arquivo.
 
 interface JanelaChatProps {
   onFechar?: () => void;
@@ -19,7 +18,7 @@ interface Mensagem {
 
 const TEMPO_INATIVIDADE_MS = 5 * 60 * 1000;
 
-const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => { // onFechar será usado agora
+const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
   const [mensagens, setMensagens] = useState<Mensagem[]>([]);
   const [texto, setTexto] = useState('');
   const [carregando, setCarregando] = useState(false);
@@ -55,7 +54,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => { // onFechar se
     }
   }, [leadPreenchido]);
 
-  // Funções de lógica (salvar, detectarPedidoDeAtendente, etc.) permanecem as mesmas...
   const iniciarTimeoutInatividade = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = window.setTimeout(() => salvar(), TEMPO_INATIVIDADE_MS);
@@ -83,17 +81,26 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => { // onFechar se
   };
 
   const gerarResumoDaConversa = async (): Promise<string> => {
-    const mensagensCliente = mensagens.filter(m => m.autor === 'cliente').map(m => m.texto).join('\n');
+    const mensagensCliente = mensagens
+      .filter(m => m.autor === 'cliente')
+      .map(m => m.texto)
+      .join('\n');
     const prompt = `Resuma de forma clara e objetiva a seguinte conversa de um cliente:\n\n${mensagensCliente}`;
     try {
       return await enviarMensagemParaIA({ promptSistema: prompt, mensagens: [] });
-    } catch { return 'Resumo indisponível.'; }
+    } catch {
+      return 'Resumo indisponível.';
+    }
   };
 
   const enviar = async () => {
     if (!texto.trim() || carregando) return;
 
-    const novaMensagem: Mensagem = { autor: 'cliente', texto: texto.trim(), hora: new Date().toISOString() };
+    const novaMensagem: Mensagem = {
+      autor: 'cliente',
+      texto: texto.trim(),
+      hora: new Date().toISOString(),
+    };
     setMensagens(m => [...m, novaMensagem]);
     setTexto('');
     setCarregando(true);
@@ -120,7 +127,11 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => { // onFechar se
         promptSistema: prompt,
         mensagens: [{ role: 'user', content: novaMensagem.texto }],
       });
-      const respostaMensagem: Mensagem = { autor: 'ia', texto: respostaTexto, hora: new Date().toISOString() };
+      const respostaMensagem: Mensagem = {
+        autor: 'ia',
+        texto: respostaTexto,
+        hora: new Date().toISOString(),
+      };
       setMensagens(m => [...m, respostaMensagem]);
 
     } catch (err) {
@@ -141,18 +152,17 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => { // onFechar se
   };
 
   if (!leadPreenchido) {
-      return (
-        <FormularioLead
-          onSubmit={(nome, tel) => {
-            setClienteNome(nome);
-            setContato(tel);
-            setLeadPreenchido(true);
-          }}
-          // Conecta a função de fechar o chat
-          onClose={() => window.parent.postMessage({ action: 'fechar-chat' }, '*')}
-        />
-      );
-    }
+    return (
+      <FormularioLead
+        onSubmit={(nome, tel) => {
+          setClienteNome(nome);
+          setContato(tel);
+          setLeadPreenchido(true);
+        }}
+        onClose={() => window.parent.postMessage({ action: 'fechar-chat' }, '*')}
+      />
+    );
+  }
 
   return (
     <div className={styles.janelaChat}>
@@ -167,15 +177,14 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => { // onFechar se
           className={styles.closeButton}
           aria-label="Fechar chat"
         >
-          {/* O '✖' foi substituído por um ícone SVG com cor definida diretamente */}
-          <svg 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="white" /* <-- A cor é definida aqui e é mais confiável */
-            strokeWidth="2.5" 
-            strokeLinecap="round" 
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor" // herda a cor definida no CSS (.closeButton)
+            strokeWidth="2.5"
+            strokeLinecap="round"
             strokeLinejoin="round"
           >
             <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -223,7 +232,6 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => { // onFechar se
   );
 };
 
-// O componente do ícone continua aqui, como uma constante local.
 const SendIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -231,7 +239,7 @@ const SendIcon = () => (
     height="24"
     viewBox="0 0 24 24"
     fill="none"
-    stroke="white"
+    stroke="currentColor" // herda cor do .sendButton
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
@@ -241,6 +249,4 @@ const SendIcon = () => (
   </svg>
 );
 
-
-// CORREÇÃO: Adicionando o export default que estava faltando.
 export default JanelaChat;
