@@ -21,7 +21,7 @@
   .janelaChat {
     left: 0;
     right: 0;
-    bottom: 20;
+    bottom: 0;
     width: 100vw;
     height: 100vh; /* ocupa todo o viewport */
     border-radius: 0;
