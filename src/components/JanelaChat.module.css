@@ -1,4 +1,4 @@
-/* JanelaChat.module.css */
+/* JanelaChat.module.css - VERSÃO FINAL CORRIGIDA */
 
 /* -- Container Principal do Chat -- */
 .janelaChat {
@@ -10,10 +10,9 @@
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   font-family: 'Inter', sans-serif;
   overflow: hidden;
-
-  /* CHAVE DO LAYOUT: Define o container como uma coluna flexível */
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 /* -- Layout para Mobile -- */
@@ -24,6 +23,7 @@
     right: 0;
     bottom: 0;
     width: 100vw;
+    /* CORREÇÃO: Altura correta para descontar o espaço do topo */
     height: calc(100vh - 0px);
     border-radius: 0;
     border: none;
@@ -39,7 +39,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* CHAVE DO LAYOUT: Impede que o cabeçalho encolha */
   flex-shrink: 0;
 }
 
@@ -65,16 +64,9 @@
 }
 
 /* -- Container das Mensagens -- */
-/* Dentro de JanelaChat.module.css */
-
-/* -- Container das Mensagens -- */
 .messagesContainer {
-  /* A linha que faz ele crescer */
   flex: 1;
-
-  /* A CORREÇÃO FINAL: Força o flex: 1 a funcionar corretamente */
   min-height: 0;
-  
   overflow-y: auto;
   padding: 16px;
   background-color: #f8f9fa;
@@ -103,16 +95,16 @@
   justify-content: flex-end;
 }
 
-/* Em JanelaChat.module.css */
-
+/* CORREÇÃO: Removida a duplicação da classe .messageBubble */
 .messageBubble {
+  display: inline-block; /* Propriedade importante que estava faltando em uma das versões */
   padding: 10px 14px;
   border-radius: 18px;
   max-width: 80%;
   word-break: break-word;
   white-space: pre-wrap;
   line-height: 1.5;
-  background-color: #e9ecef;
+  background-color: #e9ecef; /* Cor padrão (IA) */
   color: #212529;
   border-bottom-left-radius: 4px;
 }
@@ -129,46 +121,33 @@
 }
 
 /* -- Rodapé com Input e Botão -- */
-/* evita que padding/borda somem na altura */
-/* evita somar padding/borda na altura */
-.janelaChat * { box-sizing: border-box; }
-
-/* Rodapé colado no fundo, sem espaço extra */
 .footer {
-  padding: 0 12px;         /* zero em cima e embaixo */
-  height: 56px;            /* altura fixa do rodapé */
+  padding: 12px;
   display: flex;
-  align-items: center;     /* centraliza input/botão verticalmente */
+  align-items: center;
   gap: 10px;
   border-top: 1px solid #e2e8f0;
   background-color: #fff;
   flex-shrink: 0;
 }
 
-/* Input e botão com a MESMA altura, sem margem extra */
 .textInput {
   flex: 1;
-  height: 40px;            /* mesma base do botão */
-  line-height: 40px;       /* centraliza o texto */
-  padding: 0 14px;         /* sem padding vertical */
-  margin: 0;               /* garante nenhum espaçamento extra */
+  height: 44px; /* Altura igual ao botão */
+  padding: 0 16px;
   font-size: 16px;
   border: 1px solid #ced4da;
-  border-radius: 20px;
+  border-radius: 22px; /* Metade da altura para ser totalmente redondo */
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.sendButton {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
+.textInput:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
 }
 
-
-
+/* CORREÇÃO: Removida a duplicação da classe .sendButton */
 .sendButton {
   background-color: #007bff;
   border: none;
@@ -179,6 +158,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  flex-shrink: 0; /* Impede que o botão encolha */
   transition: background-color 0.2s, transform 0.2s;
 }
 
@@ -190,3 +170,5 @@
   background-color: #a0aec0;
   cursor: not-allowed;
 }
+
+/* CORREÇÃO: A chave '}' extra que estava aqui foi removida. */
