@@ -174,3 +174,31 @@
   background-color: var(--chat-muted-strong);
   cursor: not-allowed;
 }
+
+
+
+/* ===== Links e botões dentro das mensagens ===== */
+.messageBubble a {
+  color: var(--chat-brand);
+  text-decoration: underline;
+  word-break: break-word;
+}
+
+.messageBubble a:hover {
+  color: var(--chat-brand-dark);
+}
+
+.messageBubble a[target="_blank"]::after {
+  content: ' ↗';
+  font-size: 0.85em;
+}
+
+.messageBubble a[href^="https://wa.me"] {
+  color: #25d366; /* cor oficial do WhatsApp */
+  font-weight: 500;
+  text-decoration: none;
+}
+.messageBubble a[href^="https://wa.me"]:hover {
+  text-decoration: underline;
+}
+

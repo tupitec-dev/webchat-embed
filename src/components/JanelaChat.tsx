@@ -6,6 +6,9 @@ import { salvarConversa } from '../services/conversaService';
 import FormularioLead from './FormularioLead';
 import styles from './JanelaChat.module.css';
 
+/* NOVO: utils para linkificar texto e reconhecer WhatsApp */
+import { renderRichText, getWhatsappDigitsFromInfo } from '../utils/rich';
+
 interface JanelaChatProps {
   onFechar?: () => void;
 }
@@ -54,6 +57,12 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
     return v as React.CSSProperties;
   }, []);
   // =====================================================================
+
+  // NOVO: detecta o número oficial de WhatsApp a partir das informações
+  const whatsappDigits = useMemo(
+    () => getWhatsappDigitsFromInfo(informacoes as Record<string, string>),
+    [informacoes]
+  );
 
   useEffect(() => {
     mensagensRef.current?.scrollTo(0, mensagensRef.current.scrollHeight);
@@ -225,7 +234,8 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
             <div
               className={`${styles.messageBubble} ${msg.autor === 'cliente' ? styles.messageBubbleCliente : ''}`}
             >
-              {msg.texto}
+              {/* NOVO: renderização rica (links/e-mails/telefones/WhatsApp) */}
+              {renderRichText(msg.texto, { whatsappDigits, defaultCountry: '55' })}
             </div>
           </div>
         ))}
