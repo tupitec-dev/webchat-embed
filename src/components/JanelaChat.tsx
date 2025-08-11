@@ -227,7 +227,9 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
             <div
               className={`${styles.messageBubble} ${msg.autor === 'cliente' ? styles.messageBubbleCliente : ''}`}
             >
-              {linkifyText(msg.texto, { phones: 'both', newTab: true })}  {/* <-- AQUI */}
+              // dentro da bolha de mensagem:
+              {linkifyText(msg.texto, { phones: 'tel', newTab: true })}
+
             </div>
           </div>
         ))}

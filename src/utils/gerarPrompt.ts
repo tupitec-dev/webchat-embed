@@ -41,7 +41,7 @@ function normalizePhone(phone?: string): string | undefined {
   if (!phone) return undefined;
   const digits = phone.replace(/\D/g, '');
   if (!digits) return undefined;
-  // aceita 10 ou 11 dígitos BR; se vier sem DDI, podemos aceitar e deixar o front linkificar igualmente
+  // aceita 10 ou 11 dígitos BR; se vier sem DDI, o front ainda linkifica
   return digits;
 }
 
@@ -66,28 +66,22 @@ export function gerarPromptPersonalizado({
   const emailAddress =
     normalizeEmail(pickValue(informacoes, ['email', 'e-mail'])) || undefined;
 
-  // telefone “cru” (apenas dígitos). Pode ser usado como tel: e também como fallback do WhatsApp
+  // telefone “cru” (apenas dígitos)
   const phoneDigits =
     normalizePhone(pickValue(informacoes, ['telefone', 'telefoneFixo', 'celular'])) ||
     undefined;
 
-  // whatsapp: preferimos número cru em `whatsapp`; se não houver, tentamos `telefone`;
-  // como último recurso, aceitamos `whatsappLink` pronto.
-  const whatsappDigits = normalizePhone(pickValue(informacoes, ['whatsapp'])) || phoneDigits;
-  const whatsappLinkFromDigits = toWaMe(whatsappDigits);
+  // WhatsApp: só se houver `whatsapp` (número) ou `whatsappLink`
+  const whatsappDigits = normalizePhone(pickValue(informacoes, ['whatsapp'])) || undefined;
   const whatsappLink =
-    pickValue(informacoes, ['whatsappLink']) || whatsappLinkFromDigits || undefined;
+    pickValue(informacoes, ['whatsappLink']) || toWaMe(whatsappDigits) || undefined;
 
   // bloco de contatos (texto puro, sem HTML/Markdown)
   const contatos: string[] = [];
   if (siteUrl) contatos.push(`- Site: ${siteUrl}`);
   if (emailAddress) contatos.push(`- E-mail: ${emailAddress}`);
   if (phoneDigits) contatos.push(`- Telefone: ${phoneDigits}`);
-  if (whatsappLink) {
-    contatos.push(`- WhatsApp: ${whatsappLink}`);
-  } else if (whatsappDigits) {
-    contatos.push(`- WhatsApp: ${whatsappDigits}`);
-  }
+  if (whatsappLink) contatos.push(`- WhatsApp: ${whatsappLink}`);
 
   // montar "Outros dados" sem duplicar chaves de contato
   const chavesContato = new Set([
