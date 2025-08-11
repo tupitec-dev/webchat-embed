@@ -5,6 +5,8 @@ import { enviarMensagemParaIA } from '../services/chatService';
 import { salvarConversa } from '../services/conversaService';
 import FormularioLead from './FormularioLead';
 import styles from './JanelaChat.module.css';
+import { linkifyText } from '../utils/linkify';
+
 
 interface JanelaChatProps {
   onFechar?: () => void;
@@ -225,7 +227,7 @@ const JanelaChat: React.FC<JanelaChatProps> = ({ onFechar }) => {
             <div
               className={`${styles.messageBubble} ${msg.autor === 'cliente' ? styles.messageBubbleCliente : ''}`}
             >
-              {msg.texto}
+              {linkifyText(msg.texto, { phones: 'both', newTab: true })}  {/* <-- AQUI */}
             </div>
           </div>
         ))}
