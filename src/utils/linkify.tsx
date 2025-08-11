@@ -8,7 +8,10 @@ interface LinkifyOptions {
 
 const URL_REGEX = /(?:https?:\/\/|www\.)[^\s<>"')]+/i;
 const EMAIL_REGEX = /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/i;
-const BR_PHONE_REGEX = /\b(?:\+?55\s?)?(?:\(?\d{2}\)?\s?)?\d{4,5}[-.\s]?\d{4}\b/;
+
+// depois — cobre 0+operadora, +55/55 e DDD+numero
+const BR_PHONE_REGEX = /\b(?:0\d{2}\s?\(?\d{2}\)?\s?\d{4,5}[-.\s]?\d{4}|(?:\+?55\s?)?\(?\d{2}\)?\s?\d{4,5}[-.\s]?\d{4})\b/;
+
 
 const MASTER_REGEX = new RegExp(
   `(${URL_REGEX.source})|(${EMAIL_REGEX.source})|(${BR_PHONE_REGEX.source})`,
@@ -50,8 +53,15 @@ export function linkifyText(
       out.push(text.slice(lastIndex, offset as number));
     }
 
+    // dentro de linkifyText(), no ramo de URL:
     if (url) {
-      const href = normalizeUrl(url);
+      // remove pontuação final (.,;:!?…) do link, mas preserva no texto
+      const trailingMatch = url.match(/[.,;:!?…]+$/);
+      const cleanDisplay = trailingMatch ? url.slice(0, -trailingMatch[0].length) : url;
+      const trailing = trailingMatch ? trailingMatch[0] : '';
+
+      const href = normalizeUrl(cleanDisplay);
+
       if (isSafeUrl(href)) {
         out.push(
           <a
@@ -60,9 +70,10 @@ export function linkifyText(
             target={newTab ? '_blank' : undefined}
             rel={newTab ? 'noopener noreferrer' : undefined}
           >
-            {url}
+            {cleanDisplay}
           </a>
         );
+        if (trailing) out.push(trailing); // devolve a pontuação fora do link
       } else {
         out.push(url);
       }
